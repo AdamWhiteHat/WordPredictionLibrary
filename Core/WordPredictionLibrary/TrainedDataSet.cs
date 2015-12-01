@@ -19,8 +19,7 @@ namespace WordPredictionLibrary
 
 		public TrainedDataSet(string filename)
 		{
-			nextWordDictionary = new WordPredictionDictionary();
-			
+			nextWordDictionary = new WordPredictionDictionary();			
 		}
 
 		public void Train(FileInfo paragraphFile)
