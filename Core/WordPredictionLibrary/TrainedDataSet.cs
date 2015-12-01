@@ -15,11 +15,11 @@ namespace WordPredictionLibrary
 
 		private static string AllowedChars = " .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		
-		private NextWordDictionary nextWordDictionary;
+		private WordPredictionDictionary nextWordDictionary;
 
 		public TrainedDataSet(string filename)
 		{
-			nextWordDictionary = new NextWordDictionary();
+			nextWordDictionary = new WordPredictionDictionary();
 			
 		}
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WordPredictionLibrary
 {
-	public class NextWordDictionary
+	public class WordPredictionDictionary
 	{
 		private Word lastWord { get; set; }
 		private Dictionary<string, Word> wordDictionary;
@@ -14,7 +14,7 @@ namespace WordPredictionLibrary
 		public int Count { get { return wordDictionary.Count; } }
 		public static string EndPlaceholder = "{{end}}";
 
-		public NextWordDictionary()
+		public WordPredictionDictionary()
 		{
 			wordDictionary = new Dictionary<string, Word>();
 		}
