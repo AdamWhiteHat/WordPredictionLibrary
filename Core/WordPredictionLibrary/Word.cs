@@ -38,19 +38,7 @@ namespace WordPredictionLibrary
 
 			value = MakeLower(value);
 			Value = value;
-		}
-
-		public string ToString()
-		{
-			return string.Format("[NextWordFrequencyDictionary = ", this.Value) +
-				"[" +
-				Environment.NewLine + "\t" +
-				string.Join(Environment.NewLine + "\t",
-					nextWordFrequencyDictionary.OrderByFrequencyDescending().Select
-						(kvp => string.Format("{0}:{1}",(BaseProbability * kvp.Value).ToString(), kvp.Key.Value) )
-				) +	Environment.NewLine +
-				"]" + Environment.NewLine;
-		}
+		}		
 
 		//public void AddNextWord(string word)
 		//{
@@ -121,6 +109,15 @@ namespace WordPredictionLibrary
 		//	return orderedDict;
 		//}
 
+		private string MakeLower(string input)
+		{
+			if (!string.IsNullOrWhiteSpace(input))
+			{
+				input = input.ToLowerInvariant();
+			}
+			return input;
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -162,13 +159,16 @@ namespace WordPredictionLibrary
 			return Value.GetHashCode();
 		}
 
-		private string MakeLower(string input)
+		public override string ToString()
 		{
-			if (!string.IsNullOrWhiteSpace(input))
-			{
-				input = input.ToLowerInvariant();
-			}
-			return input;
+			return string.Format("[NextWordFrequencyDictionary = ", this.Value) +
+				"[" +
+				Environment.NewLine + "\t" +
+				string.Join(Environment.NewLine + "\t",
+					nextWordFrequencyDictionary.OrderByFrequencyDescending().Select
+						(kvp => string.Format("{0}:{1}", (BaseProbability * kvp.Value).ToString(), kvp.Key.Value))
+				) + Environment.NewLine +
+				"]" + Environment.NewLine;
 		}
     }
 }

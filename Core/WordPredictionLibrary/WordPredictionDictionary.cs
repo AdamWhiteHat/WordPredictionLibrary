@@ -8,26 +8,14 @@ namespace WordPredictionLibrary
 {
 	public class WordPredictionDictionary
 	{
-		private Word lastWord { get; set; }
-		private Dictionary<string, Word> wordDictionary;
-
 		public int Count { get { return wordDictionary.Count; } }
-		public static string EndPlaceholder = "{{end}}";
+
+		private Dictionary<string, Word> wordDictionary;		
+		private static string EndPlaceholder = "{{end}}";
 
 		public WordPredictionDictionary()
 		{
 			wordDictionary = new Dictionary<string, Word>();
-		}
-
-		public string ToString()
-		{
-			StringBuilder result = new StringBuilder();
-			
-			foreach (Word word in wordDictionary.OrderByDescending(kvp => kvp.Value.TotalWords).Select(kvp => kvp.Value))
-			{
-				result.AppendFormat("[Word \"{0}\": LinkedWords/Total = {1}/{2}, {3}{4}]", word.Value, word.TotalWords, this.Count, word.ToString(), Environment.NewLine);
-			}
-			return result.ToString();
 		}
 
 		public string SuggestNextWord(string fromWord)
@@ -76,7 +64,7 @@ namespace WordPredictionLibrary
 			wordDictionary[word].TrainNextWord(wordDictionary[nextWord]);
 		}
 
-		void Add(string word)
+		private void Add(string word)
 		{
 			word = MakeLower(word);
 			if (!wordDictionary.ContainsKey(word))
@@ -93,6 +81,16 @@ namespace WordPredictionLibrary
 			}
 			return input;
 		}
-	}
 
+		public override string ToString()
+		{
+			StringBuilder result = new StringBuilder();
+
+			foreach (Word word in wordDictionary.OrderByDescending(kvp => kvp.Value.TotalWords).Select(kvp => kvp.Value))
+			{
+				result.AppendFormat("[Word \"{0}\": LinkedWords/Total = {1}/{2}, {3}{4}]", word.Value, word.TotalWords, this.Count, word.ToString(), Environment.NewLine);
+			}
+			return result.ToString();
+		}
+	}
 }

@@ -11,13 +11,6 @@ namespace WordPredictionLibrary
 		private Dictionary<Word, int> nextWordDictionary;
 		public int Count { get { return nextWordDictionary.Count; } }
 
-		public string ToString()
-		{
-			return string.Join(Environment.NewLine,
-				nextWordDictionary.OrderByDescending(kvp => kvp.Value).Select(kvp => string.Format("{0}:{1}",kvp.Value,kvp.Key.Value))
-			);
-		}
-
 		public NextWordFrequencyDictionary()
 		{
 			nextWordDictionary = new Dictionary<Word, int>();
@@ -43,6 +36,13 @@ namespace WordPredictionLibrary
 			return GetNextWordByFrequencyDescending().Take(count);
 		}
 
+		public override string ToString()
+		{
+			return string.Join(Environment.NewLine,
+				nextWordDictionary.OrderByDescending(kvp => kvp.Value).Select(kvp => string.Format("{0}:{1}", kvp.Value, kvp.Key.Value))
+			);
+		}
+		
 		#region Word Implementation
 
 		public int this[Word key]

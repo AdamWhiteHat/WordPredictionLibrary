@@ -79,7 +79,8 @@ namespace WordPredictionLibrary
 			serializedDataSet.AppendFormat("]{0}", Environment.NewLine);
 
 			string debugNextWordDictionaryFilename = string.Format("Debug.{0}.NextWordDictionary.{1}.txt", Path.GetFileNameWithoutExtension(filename), nextWordDictionary.Count);
-			FileInfo nextWordDictionary = new FileInfo(debugNextWordDictionaryFilename).RenameIfExists();
+			FileInfo nextWordDictionaryFileInfo = new FileInfo(debugNextWordDictionaryFilename);
+			nextWordDictionaryFileInfo = nextWordDictionaryFileInfo.RenameIfExists();
 			File.AppendAllText(debugNextWordDictionaryFilename, serializedDataSet.ToString());
 		}
 	}		
