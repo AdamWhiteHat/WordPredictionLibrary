@@ -8,7 +8,7 @@ namespace WordPredictionLibrary
 {
 	public class NextWordFrequencyDictionary
 	{
-		private Dictionary<Word, int> nextWordDictionary;
+		internal Dictionary<Word, int> nextWordDictionary;
 		public int Count { get { return nextWordDictionary.Count; } }
 
 		public NextWordFrequencyDictionary()
@@ -70,10 +70,10 @@ namespace WordPredictionLibrary
 
 		public void Add(string word)
 		{
-			word = MakeLower(word);
-			if (!this.Contains(word))
+			string lowerWord = word.TryToLower();
+			if (!this.Contains(lowerWord))
 			{
-				nextWordDictionary.Add(new Word(word), 1);
+				nextWordDictionary.Add(new Word(lowerWord), 1);
 			}
 		}
 				
@@ -94,17 +94,8 @@ namespace WordPredictionLibrary
 		
 		public bool Contains(string key)
 		{
-			key = MakeLower(key);
-			return nextWordDictionary.Any(kvp => kvp.Key.Equals(key));
-		}
-
-		private string MakeLower(string input)
-		{
-			if (!string.IsNullOrWhiteSpace(input))
-			{
-				input = input.ToLowerInvariant();
-			}
-			return input;
+			string lowerKey = key.TryToLower();
+			return nextWordDictionary.Any(kvp => kvp.Key.Equals(lowerKey));
 		}
 
 		#endregion

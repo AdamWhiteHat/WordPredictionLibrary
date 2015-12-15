@@ -25,4 +25,19 @@ namespace WordPredictionLibrary
 			return default(FileInfo);
 		}
 	}
+
+	public static class StringExtensionMethods
+	{
+		public static string TryToLower(this string source)
+		{
+			if (string.IsNullOrWhiteSpace(source))
+			{
+				return source;
+			}
+			else
+			{				
+				return source.ToLowerInvariant();
+			}
+		}
+	}
 }

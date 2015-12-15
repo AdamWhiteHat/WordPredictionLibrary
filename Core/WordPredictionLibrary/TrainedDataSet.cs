@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using WordPredictionLibrary;
 
 namespace WordPredictionLibrary
@@ -12,28 +14,34 @@ namespace WordPredictionLibrary
 	{
 		public long TotalWordsProcessed { get; private set; }
 		public int UniqueWordsCataloged { get { return nextWordDictionary.Count; } }
-
-		private static string AllowedChars = " .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		
-		private WordPredictionDictionary nextWordDictionary;
+		private WordPredictionDictionary nextWordDictionary;		
+		private static readonly XmlSerializer WordPredictionDictionaryXmlSerializer = new XmlSerializer(typeof(WordPredictionDictionary));
+		private static string AllowedChars = " .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+		public TrainedDataSet()
+		{
+			TotalWordsProcessed = 0;
+			nextWordDictionary = new WordPredictionDictionary();
+		}
 
 		public TrainedDataSet(string filename)
 		{
-			nextWordDictionary = new WordPredictionDictionary();			
+			TotalWordsProcessed = 0;
+			nextWordDictionary = DeSerializeFromFile(filename);
 		}
 
 		public void Train(FileInfo paragraphFile)
 		{
-			List<List<string>> paragraphs = ParseFile(paragraphFile.FullName);
-						
+			List<List<string>> paragraphs = ParseTextFile(paragraphFile.FullName);
+
 			foreach (List<string> sentance in paragraphs)
 			{
 				nextWordDictionary.Train(sentance);
 			}
-								
 		}
 
-		private List<List<string>> ParseFile(string filename)
+		private List<List<string>> ParseTextFile(string filename)
 		{
 			if (!File.Exists(filename))
 			{
@@ -42,7 +50,7 @@ namespace WordPredictionLibrary
 
 			string documentBody = new string(File.ReadAllText(filename).Where(c => AllowedChars.Contains(c)).ToArray());
 			List<string> sentences = documentBody.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-			
+
 			List<List<string>> paragraphs = new List<List<string>>();
 			foreach (string sentence in sentences)
 			{
@@ -56,7 +64,7 @@ namespace WordPredictionLibrary
 			FileInfo parsedFile = new FileInfo(debugParsedFileFilename).RenameIfExists();
 
 			int counter = 1;
-			
+
 			foreach (List<string> sentance in paragraphs)
 			{
 				File.AppendAllText(parsedFile.FullName, string.Format("Sentence{0} = \"{1}.\";{2}", counter++, string.Join(" ", sentance), Environment.NewLine));
@@ -68,11 +76,34 @@ namespace WordPredictionLibrary
 
 		public void SerializeToFile(string filename)
 		{
+			using (StreamWriter streamWriter = new StreamWriter(filename))
+			{
+				WordPredictionDictionaryXmlSerializer.Serialize(streamWriter, nextWordDictionary);
+				streamWriter.Flush();
+				streamWriter.Close();
+			}
+		}
+
+		private WordPredictionDictionary DeSerializeFromFile(string filename)
+		{
+			WordPredictionDictionary result = new WordPredictionDictionary();
+			using (TextReader textReader = new StringReader(filename))
+			{
+				using (XmlReader xmlReader = XmlReader.Create(textReader))
+				{
+					result.ReadXml(xmlReader);
+				}				
+			}
+			return result;
+		}
+
+		private void DebugToFile(string filename)
+		{
 			// Part #2
 			//		...
 			StringBuilder serializedDataSet = new StringBuilder();
 
-			serializedDataSet.AppendFormat("[TrainedDataSet:{0}",Environment.NewLine);
+			serializedDataSet.AppendFormat("[TrainedDataSet:{0}", Environment.NewLine);
 			serializedDataSet.AppendFormat("\tTotalWordsProcessed = {0}, ", TotalWordsProcessed);
 			serializedDataSet.AppendFormat("\tUniqueWordsCataloged = {0}, ", UniqueWordsCataloged);
 			serializedDataSet.AppendFormat("\tNextWordDictionary = [{0}\t\t{1}{0}\t]", Environment.NewLine, nextWordDictionary.ToString());
@@ -83,5 +114,5 @@ namespace WordPredictionLibrary
 			nextWordDictionaryFileInfo = nextWordDictionaryFileInfo.RenameIfExists();
 			File.AppendAllText(debugNextWordDictionaryFilename, serializedDataSet.ToString());
 		}
-	}		
+	}
 }
