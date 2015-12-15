@@ -30,10 +30,10 @@
 		{
 			this.btnOpen = new System.Windows.Forms.Button();
 			this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.btnTrain = new System.Windows.Forms.Button();
 			this.labelTotalWords = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
+			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.treeView1 = new System.Windows.Forms.TreeView();
 			this.flowLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -65,12 +65,6 @@
 			this.flowLayoutPanel.Padding = new System.Windows.Forms.Padding(1);
 			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 283);
 			this.flowLayoutPanel.TabIndex = 2;
-			// 
-			// openFileDialog
-			// 
-			this.openFileDialog.AddExtension = false;
-			this.openFileDialog.CheckFileExists = false;
-			this.openFileDialog.Title = "Open suggestion dictionary...";
 			// 
 			// btnTrain
 			// 
@@ -107,6 +101,12 @@
 			this.label2.Text = "{0} Unique Words";
 			this.label2.Visible = false;
 			// 
+			// openFileDialog
+			// 
+			this.openFileDialog.AddExtension = false;
+			this.openFileDialog.CheckFileExists = false;
+			this.openFileDialog.Title = "Open suggestion dictionary...";
+			// 
 			// treeView1
 			// 
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Right;
@@ -119,8 +119,6 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ClientSize = new System.Drawing.Size(453, 283);
 			this.Controls.Add(this.treeView1);
 			this.Controls.Add(this.flowLayoutPanel);
