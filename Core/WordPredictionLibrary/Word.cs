@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WordPredictionLibrary
 {
@@ -66,6 +62,11 @@ namespace WordPredictionLibrary
 		public IEnumerable<string> SuggestNextWords(int count)
 		{
 			return nextWordFrequencyDictionary.TakeTop(count);
+		}
+
+		internal void OrderInternalDictionary()
+		{
+			nextWordFrequencyDictionary = new NextWordFrequencyDictionary( nextWordFrequencyDictionary.nextWordDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) );
 		}
 
 		public override bool Equals(object obj)

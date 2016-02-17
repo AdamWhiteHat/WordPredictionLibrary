@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WordPredictionLibrary;
 
@@ -20,6 +14,7 @@ namespace SuggestWordLibrary
 		{
 			InitializeComponent();
 			dataSet = new TrainedDataSet();
+			IsDatasetDirty = false;
 		}
 
 		private void btnNew_Click(object sender, EventArgs e)
@@ -54,6 +49,7 @@ namespace SuggestWordLibrary
 
 		#endregion
 
+		bool IsDatasetDirty { get; set; }
 		TrainedDataSet dataSet { get; set; }
 
 		private void NewDataSet()
@@ -70,10 +66,13 @@ namespace SuggestWordLibrary
 			if (AskIfSaveFirst())
 			{
 				string selectedFile = ShowFileDialog(openFileDialog);
-				if (File.Exists(selectedFile))
+				if (!string.IsNullOrWhiteSpace(selectedFile) && File.Exists(selectedFile))
 				{
-					dataSet = new TrainedDataSet(selectedFile);
-					OnDataSetLoaded();
+					dataSet = TrainedDataSet.DeserializeFromXml(selectedFile);
+					if (dataSet != null)
+					{
+						OnDataSetLoaded();
+					}
 				}
 			}
 		}
@@ -85,20 +84,23 @@ namespace SuggestWordLibrary
 		{
 			if (dataSet != null && dataSet.TotalWordsProcessed > 1)
 			{
-				DialogResult result = MessageBox.Show("Do you wish to save current Trained Data Set?", "Save?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-				switch (result)
+				if (IsDatasetDirty)
 				{
-					case DialogResult.Yes:
-						SaveDataSet();
-						break;
+					DialogResult result = MessageBox.Show("Do you wish to save current Trained Data Set?", "Save?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
-					case DialogResult.No:
-						break;
+					switch (result)
+					{
+						case DialogResult.Yes:
+							SaveDataSet();
+							break;
 
-					case DialogResult.Cancel:
-					default:
-						return false;
+						case DialogResult.No:
+							break;
+
+						case DialogResult.Cancel:
+						default:
+							return false;
+					}
 				}
 			}
 			return true;
@@ -109,6 +111,8 @@ namespace SuggestWordLibrary
 			btnTrain.Visible = true;
 			labelTotalWords.Visible = true;
 			labelUniqueWords.Visible = true;
+			IsDatasetDirty = false;
+			UpdateLabels();
 		}
 
 		private void SaveDataSet()
@@ -116,33 +120,41 @@ namespace SuggestWordLibrary
 			string selectedFile = ShowFileDialog(saveFileDialog);
 			if (!string.IsNullOrWhiteSpace(selectedFile))
 			{
-				dataSet.SerializeToFile(selectedFile);
+				if (TrainedDataSet.SerializeToXml(dataSet, selectedFile))
+				{
+					IsDatasetDirty = false;
+				}
 			}
 		}
 
 		private void TrainDataSet()
 		{
 			string selectedFile = ShowFileDialog(openFileDialog);
-			if (!File.Exists(selectedFile))
-			{
-				ShowError("File does not exist: \"{0}\"", selectedFile);
-				return;
-			}
-			else
+			if (!string.IsNullOrWhiteSpace(selectedFile) && File.Exists(selectedFile))
 			{
 				dataSet.Train(new FileInfo(selectedFile));
 
-				ShowInfo("TotalWordsProcessed (NextWordDictionary.Count): {0}", dataSet.TotalWordsProcessed);
-				ShowInfo("UniqueWordsCataloged: \"{0}\"", dataSet.UniqueWordsCataloged);
+				IsDatasetDirty = true;
+				UpdateLabels();
 			}
 		}
-		
+
+		private void UpdateLabels()
+		{
+			labelTotalWords.Text = string.Format("{0} Total Words", dataSet.TotalWordsProcessed);
+			labelUniqueWords.Text = string.Format("{0} Unique Words", dataSet.UniqueWordsCataloged);
+		}
+
 		private string ShowFileDialog(FileDialog dialog)
 		{
 			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{ 
 				return dialog.FileName;
+			}
 			else
-				return string.Empty;
+			{ 
+				return string.Empty; 
+			}
 		}
 	}
 }

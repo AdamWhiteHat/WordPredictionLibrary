@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WordPredictionLibrary
 {
@@ -14,6 +12,12 @@ namespace WordPredictionLibrary
 		public NextWordFrequencyDictionary()
 		{
 			nextWordDictionary = new Dictionary<Word, int>();
+		}
+
+		public NextWordFrequencyDictionary(Dictionary<Word, int> dictionary)
+			: this()
+		{
+			nextWordDictionary = dictionary;
 		}
 
 		public IEnumerable<string> GetNextWordByFrequencyDescending()
