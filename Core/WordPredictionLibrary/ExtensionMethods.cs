@@ -32,7 +32,7 @@ namespace WordPredictionLibrary
 		{
 			if (string.IsNullOrWhiteSpace(source))
 			{
-				return source;
+				return "";
 			}
 			else
 			{				
