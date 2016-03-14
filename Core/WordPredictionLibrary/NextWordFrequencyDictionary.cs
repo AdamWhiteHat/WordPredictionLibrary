@@ -6,28 +6,47 @@ namespace WordPredictionLibrary
 {
 	public class NextWordFrequencyDictionary
 	{
-		internal Dictionary<Word, int> nextWordDictionary;
-		public int Count { get { return nextWordDictionary.Count; } }
-
+		internal Dictionary<Word, int> _internalDictionary = null;
+		public int UniqueWordCount { get { return _internalDictionary.Count; } }
+		public int TotalWordsSeen { get { return _internalDictionary.Values.Sum(); } }
+				
 		public NextWordFrequencyDictionary()
 		{
-			nextWordDictionary = new Dictionary<Word, int>();
+			_internalDictionary = new Dictionary<Word, int>();
 		}
 
 		public NextWordFrequencyDictionary(Dictionary<Word, int> dictionary)
 			: this()
 		{
-			nextWordDictionary = dictionary;
+			_internalDictionary = dictionary;
 		}
 
-		public IEnumerable<string> GetNextWordByFrequencyDescending()
+		public void Add(Word word)
 		{
-			return OrderByFrequencyDescending().Select(kvp => kvp.Key.Value);
+			if (this.Contains(word))
+			{
+				_internalDictionary[word] += 1;
+			}
+			else
+			{
+				_internalDictionary.Add(word, 1);
+			}
 		}
 
-		public IOrderedEnumerable<KeyValuePair<Word, int>> OrderByFrequencyDescending()
+		public int this[Word key]
 		{
-			return nextWordDictionary.OrderByDescending(kvp => kvp.Value);
+			get { return this.Contains(key) ? _internalDictionary[key] : 0; }
+		}
+
+		public bool Contains(Word key)
+		{
+			return _internalDictionary.ContainsKey(key);
+		}
+
+		public bool Contains(string key)
+		{
+			string lowerKey = key.TryToLower();
+			return _internalDictionary.Any(kvp => kvp.Key.Equals(lowerKey));
 		}
 
 		public string GetNextWord()
@@ -40,68 +59,33 @@ namespace WordPredictionLibrary
 			return GetNextWordByFrequencyDescending().Take(count);
 		}
 
+		public IEnumerable<string> GetNextWordByFrequencyDescending()
+		{
+			return OrderByFrequencyDescending().Select(kvp => kvp.Key.Value);
+		}
+
+		private IOrderedEnumerable<KeyValuePair<Word, int>> _orderedDictionary = null;
+		public IOrderedEnumerable<KeyValuePair<Word, int>> OrderByFrequencyDescending()
+		{
+			// If we haven't set FrequencyDictionary yet OR it is out of date (dict has more entries)
+			if (_orderedDictionary == null || _internalDictionary.Count > _orderedDictionary.Count())
+			{
+				_orderedDictionary = _internalDictionary.OrderByDescending(kvp => kvp.Value);
+			}
+			return _orderedDictionary;
+		}		
+
+		internal void OrderInternalDictionary()
+		{
+			_internalDictionary = OrderByFrequencyDescending().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+		}
+
 		public override string ToString()
 		{
-			return string.Join(Environment.NewLine,
-				nextWordDictionary.OrderByDescending(kvp => kvp.Value).Select(kvp => string.Format("{0}:{1}", kvp.Value, kvp.Key.Value))
+			return string.Join(
+				Environment.NewLine,
+				this.OrderByFrequencyDescending().Select(kvp => string.Format("{0}:{1}", kvp.Value, kvp.Key.Value))
 			);
 		}
-		
-		#region Word Implementation
-
-		public int this[Word key]
-		{
-			get { return this.Contains(key) ? nextWordDictionary[key] : 0; }
-			set { if (this.Contains(key)) { nextWordDictionary[key] = value; } }
-		}
-
-		public void Add(Word word)
-		{			
-			if (!this.Contains(word))
-			{
-				nextWordDictionary.Add(word, 1);
-			}
-		}
-
-		public bool Contains(Word key)
-		{		
-			return nextWordDictionary.ContainsKey(key);
-		}
-		
-		#endregion
-
-		#region String Implementation
-
-		public void Add(string word)
-		{
-			string lowerWord = word.TryToLower();
-			if (!this.Contains(lowerWord))
-			{
-				nextWordDictionary.Add(new Word(lowerWord), 1);
-			}
-		}
-				
-		//public int this[string key] 
-		//{
-		//	get 
-		//	{
-		//		return this.Contains(key) ? nextWordDictionary.Single(kvp => kvp.Key.Equals(key)).Value : 0;
-		//	}
-		//	set
-		//	{
-		//		if (this.Contains(key))
-		//		{
-		//			nextWordDictionary[nextWordDictionary.Keys.Where(wrd => wrd.Equals(key)).First()] = value;
-		//		}
-		//	}
-		//}
-		
-		public bool Contains(string key)
-		{
-			string lowerKey = key.TryToLower();
-			return nextWordDictionary.Any(kvp => kvp.Key.Equals(lowerKey));
-		}
-
-		#endregion
 	}
 }

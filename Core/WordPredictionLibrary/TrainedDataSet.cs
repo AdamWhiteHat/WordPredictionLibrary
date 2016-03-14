@@ -9,66 +9,74 @@ namespace WordPredictionLibrary
 {
 	public class TrainedDataSet
 	{
-		public long TotalWordsProcessed { get; internal set; }
-		public int UniqueWordsCataloged { get { return nextWordDictionary.Count; } }
+		public long TotalWordsProcessed { get { return _wordDictionary.TotalWordsProcessed; } }
+		public int UniqueWordsCataloged { get { return _wordDictionary.UniqueWordCount; } }
 
-		private WordPredictionDictionary nextWordDictionary;
+		internal WordDictionary _wordDictionary;
 
 		private static string AllowedChars = " .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		public TrainedDataSet()
 		{
-			TotalWordsProcessed = 0;
-			nextWordDictionary = new WordPredictionDictionary();
+			_wordDictionary = new WordDictionary();
 		}
 
-		public TrainedDataSet(WordPredictionDictionary dictionary)
-			: this()
+		public TrainedDataSet(WordDictionary dictionary)
 		{
-			nextWordDictionary = dictionary;
+			_wordDictionary = dictionary;
+		}
+
+		public string SuggestNext(string currentWord)
+		{
+			return _wordDictionary.SuggestNextWord(currentWord);
 		}
 
 		public void Train(FileInfo paragraphFile)
 		{
-			List<List<string>> paragraphs = ParseTrainingFile(paragraphFile.FullName);
-
-			foreach (List<string> sentance in paragraphs)
-			{
-				nextWordDictionary.Train(sentance);
-			}
+			List<List<string>> paragraphs = TokenizeTextFile(paragraphFile.FullName);
+			_wordDictionary.Train(paragraphs);
 		}
 
-		private List<List<string>> ParseTrainingFile(string filename)
+		internal static List<List<string>> TokenizeTextFile(string filename)
 		{
-			if (!File.Exists(filename))
-			{
-				throw new FileNotFoundException("Cannot parse file that does not exist", filename);
-			}
+			if (!File.Exists(filename)) { throw new FileNotFoundException("Cannot parse file that does not exist", filename); }
 
-			string documentBody = new string(File.ReadAllText(filename).Where(c => AllowedChars.Contains(c)).ToArray());
-			List<string> sentences = documentBody.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+			string rawFileText = File.ReadAllText(filename);
+			// Do replacement of characters here
+			string massagedFileText = rawFileText.Replace('!', '.');
+			massagedFileText = rawFileText.Replace('?', '.');
 
-			List<List<string>> paragraphs = new List<List<string>>();
-			foreach (string sentence in sentences)
+			string sanitizedFileText = new string(rawFileText.Where(c => AllowedChars.Contains(c)).ToArray());
+			//List<string> fileLines = sanitizedFileText.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+			//List<List<string>> fileParagraph = fileLines.Select(p => p.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList()).ToList();
+
+			List<string> fileSentences = sanitizedFileText.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+
+			int totalWordCount = 0;
+			List<List<string>> sentences = new List<List<string>>();
+			foreach (string sentence in fileSentences)
 			{
 				List<string> words = sentence.Split(' ').ToList();
-				TotalWordsProcessed += words.Count;
-				paragraphs.Add(words);
+				totalWordCount += words.Count;
+				sentences.Add(words);
 			}
 
 #if DEBUG
-			string debugParsedFileFilename = string.Format("Debug.{0}.Parsed.{1}.txt", Path.GetFileNameWithoutExtension(filename), TotalWordsProcessed);
-			FileInfo parsedFile = new FileInfo(debugParsedFileFilename).RenameIfExists();
+			string debugParsedFileFilename = string.Format("Debug.{0}.Parsed.{1}.txt", Path.GetFileNameWithoutExtension(filename), totalWordCount);
+			FileInfo parseFile = new FileInfo(debugParsedFileFilename).RenameIfExists();
 
 			int counter = 1;
-
-			foreach (List<string> sentance in paragraphs)
-			{
-				File.AppendAllText(parsedFile.FullName, string.Format("Sentence{0} = \"{1}.\";{2}", counter++, string.Join(" ", sentance), Environment.NewLine));
-			}
+			File.AppendAllText(
+				parseFile.FullName,
+				string.Join(
+					Environment.NewLine,
+					sentences.Select(l =>
+						string.Format("Sentence{0} = \"{1}\".", counter++, string.Join(" ", l))
+					)
+				)
+			);
 #endif
-
-			return paragraphs;
+			return sentences;
 		}
 
 		#region Xml Serialization
@@ -98,7 +106,7 @@ namespace WordPredictionLibrary
 			XElement totalWordsNode = rootNode.XPathSelectElement(XmlElementNames.TotalWordsProcessedNode);
 			if (totalWordsNode == null) { return new TrainedDataSet(); }
 			int totalWordsProcessed = 0; int.TryParse(totalWordsNode.Value, out totalWordsProcessed);
-			
+
 			List<XElement> wordNodes = rootNode.XPathSelectElements(XmlElementNames.WordNode).ToList();
 			if (wordNodes == null || wordNodes.Count < 1) { return new TrainedDataSet(); }
 
@@ -120,7 +128,7 @@ namespace WordPredictionLibrary
 				int ttlWordCount = 0; int.TryParse(countNode.Value, out ttlWordCount);
 
 				Word newWord = new Word(text);
-				newWord.TotalWordCount = ttlWordCount;
+				//newWord.TotalWordsSeen = ttlWordCount;
 
 				dictionary.Add(text, newWord);
 			}
@@ -160,14 +168,13 @@ namespace WordPredictionLibrary
 					}
 
 					Word keyWord = dictionary[keyText];
-					word.nextWordFrequencyDictionary.nextWordDictionary.Add(keyWord, valueInt);
+					word._nextWordDictionary._internalDictionary.Add(keyWord, valueInt);
 				}
 			}
 
 			if (dictionary != null)
 			{
-				TrainedDataSet result = new TrainedDataSet(new WordPredictionDictionary(dictionary));
-				result.TotalWordsProcessed = totalWordsProcessed;
+				TrainedDataSet result = new TrainedDataSet(new WordDictionary(dictionary));
 				return result;
 			}
 			else
@@ -178,33 +185,32 @@ namespace WordPredictionLibrary
 
 		public static bool SerializeToXml(TrainedDataSet dataset, string filename)
 		{
-			if (dataset.nextWordDictionary.wordDictionary == null || dataset.nextWordDictionary.wordDictionary.Count < 1)
+			if (dataset == null || dataset._wordDictionary == null || dataset._wordDictionary.UniqueWordCount < 1)
 			{
 				return false;
 			}
 
 			// Sort every Word's internal dictionary
-			foreach (Word word in dataset.nextWordDictionary.wordDictionary.Select(kvp => kvp.Value))
+			foreach (Word word in dataset._wordDictionary.Words)
 			{
 				word.OrderInternalDictionary();
 			}
 
 			// Sort the NextWordDictionary
-			dataset.nextWordDictionary = 
-				new WordPredictionDictionary(
-					dataset.nextWordDictionary.wordDictionary.OrderByDescending(kvp => kvp.Value.TotalWordCount).ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+			dataset._wordDictionary =
+				new WordDictionary(
+					dataset._wordDictionary._internalDictionary.OrderByDescending(kvp => kvp.Value.TotalWordsSeen).ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
 				);
-
 
 			XDocument doc = new XDocument(
 				new XElement(XmlElementNames.RootNode,
-					new XElement(XmlElementNames.TotalWordsProcessedNode, dataset.TotalWordsProcessed),
-					dataset.nextWordDictionary.wordDictionary.Values.Select(word =>
+					new XElement(XmlElementNames.TotalWordsProcessedNode, dataset._wordDictionary.TotalWordsProcessed),
+					dataset._wordDictionary.Words.Select(word =>
 						new XElement(XmlElementNames.WordNode,
 							new XElement(XmlElementNames.ValueNode, word.Value),
-							new XElement(XmlElementNames.DictionarySizeNode, word.TotalWordCount),
+							new XElement(XmlElementNames.DictionarySizeNode, word.TotalWordsSeen),
 							new XElement(XmlElementNames.DictionaryNode,
-								word.nextWordFrequencyDictionary.nextWordDictionary.Select(kvp =>
+								word._nextWordDictionary._internalDictionary.Select(kvp =>
 									new XElement(XmlElementNames.KeyValuePairNode,
 										new XElement(XmlElementNames.KeyNode, kvp.Key.Value),
 										new XElement(XmlElementNames.ValueNode, kvp.Value)

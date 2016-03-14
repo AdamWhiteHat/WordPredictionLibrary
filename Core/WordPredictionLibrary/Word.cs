@@ -1,72 +1,47 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace WordPredictionLibrary
 {
     public class Word : IEquatable<string>
 	{
 		public string Value { get; internal set; }
-		public int TotalWordCount { get; internal set; }
+		public int TotalWordsSeen { get { return _nextWordDictionary.TotalWordsSeen; } }
+		public int UniqueWordsSeen { get { return _nextWordDictionary.UniqueWordCount; } }
 		
-		internal NextWordFrequencyDictionary nextWordFrequencyDictionary;
-		private bool isBaseProbabilityDirty;
-		private double _baseProbablility;
-		private double BaseProbability
-		{
-			get
-			{
-				if (isBaseProbabilityDirty)
-				{
-					_baseProbablility = 1.0d / TotalWordCount;
-					isBaseProbabilityDirty = false;
-				}
-				return _baseProbablility;
-			}
-		}
-
+		internal NextWordFrequencyDictionary _nextWordDictionary;
+	
 		public Word()
-		{
-			TotalWordCount = 0;
-			_baseProbablility = 0;
-			isBaseProbabilityDirty = false;			
-			nextWordFrequencyDictionary = new NextWordFrequencyDictionary();			
+		{	
+			_nextWordDictionary = new NextWordFrequencyDictionary();			
 		}
 
 		public Word(string value)
 			: this()
 		{
 			Value = value.TryToLower();
-		}		
+		}
 
-		public void TrainNextWord(Word word)
+		public void AddNextWord(Word word)
 		{
-			if (nextWordFrequencyDictionary.Contains(word))
-			{
-				nextWordFrequencyDictionary[word]++;
-			}
-			else
-			{
-				nextWordFrequencyDictionary.Add(word);
-			}
-
-			TotalWordCount++;
-			isBaseProbabilityDirty = true;
+			_nextWordDictionary.Add(word);
 		}
 
 		public string SuggestNextWord()
 		{
-			return nextWordFrequencyDictionary.GetNextWord();
+			return _nextWordDictionary.GetNextWord();
 		}
 
 		public IEnumerable<string> SuggestNextWords(int count)
 		{
-			return nextWordFrequencyDictionary.TakeTop(count);
+			return _nextWordDictionary.TakeTop(count);
 		}
 
 		internal void OrderInternalDictionary()
 		{
-			nextWordFrequencyDictionary = new NextWordFrequencyDictionary( nextWordFrequencyDictionary.nextWordDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) );
+			_nextWordDictionary.OrderInternalDictionary();
 		}
 
 		public override bool Equals(object obj)
@@ -116,28 +91,29 @@ namespace WordPredictionLibrary
 				"[" +
 				Environment.NewLine + "\t" +
 				string.Join(Environment.NewLine + "\t",
-					nextWordFrequencyDictionary.OrderByFrequencyDescending().Select
-						(kvp => string.Format("{0}:{1}", (BaseProbability * kvp.Value).ToString(), kvp.Key.Value))
+					_nextWordDictionary.OrderByFrequencyDescending().Select
+						(kvp => string.Format("{0}:{1}", (kvp.Value / TotalWordsSeen), kvp.Key.Value))
 				) + Environment.NewLine +
 				"]" + Environment.NewLine;
 		}
-		//
+
+		public double GetNextWordProbability(Word nextWord)
+		{
+			if (!_nextWordDictionary.Contains(nextWord))
+			{
+				return 0d;
+			}
+			double count = _nextWordDictionary[nextWord];
+			double totalSeen = TotalWordsSeen;
+
+			return count / totalSeen;
+		}
+
 		//public OrderedDictionary GetNextWordProbabilityDictionary()
 		//{
-		//	SortedDictionary<double, Word> sortedDict = new SortedDictionary<double, Word>();
-		//	foreach (KeyValuePair<Word, int> kvp in nextWordFrequencyDictionary)
-		//	{
-		//		sortedDict.Add(BaseProbability * kvp.Value, kvp.Key);
-		//	}
-		//
-		//	IOrderedEnumerable<KeyValuePair<double,Word>> orderedDescKvp = sortedDict.OrderByDescending(kvp => kvp.Key);
-		//
 		//	OrderedDictionary orderedDict = new OrderedDictionary();
-		//	foreach (KeyValuePair<double, Word> kvp in orderedDescKvp)
-		//	{
-		//		orderedDict.Add(kvp.Value, kvp.Key);
-		//	}
-		//
+		//	foreach (KeyValuePair<Word, int> kvp in nextWordFrequencyDictionary.OrderByFrequencyDescending())
+		//		orderedDict.Add(kvp.Key, kvp.Value / TotalWordCount);
 		//	return orderedDict;
 		//}
 	}
