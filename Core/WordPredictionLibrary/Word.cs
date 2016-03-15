@@ -87,12 +87,12 @@ namespace WordPredictionLibrary
 
 		public override string ToString()
 		{
-			return string.Format("[NextWordFrequencyDictionary = ", this.Value) +
+			return string.Format("[Word = ", this.Value) +
 				"[" +
 				Environment.NewLine + "\t" +
 				string.Join(Environment.NewLine + "\t",
 					_nextWordDictionary.OrderByFrequencyDescending().Select
-						(kvp => string.Format("{0}:{1}", (kvp.Value / TotalWordsSeen), kvp.Key.Value))
+						(kvp => string.Format("{0}:{1}", kvp.Value, kvp.Key.Value))
 				) + Environment.NewLine +
 				"]" + Environment.NewLine;
 		}

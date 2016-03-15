@@ -76,8 +76,8 @@ namespace WordPredictionLibrary
 			double average = (double)averageReferenceCount;
 			double refCount = (wordReferenceCount);
 
-			long lResult = wordReferenceCount / averageReferenceCount;
-			double dResult = average / refCount;
+			//long lResult = wordReferenceCount / averageReferenceCount;
+			double dResult = refCount / average;
 			
 			return dResult;
 		}
