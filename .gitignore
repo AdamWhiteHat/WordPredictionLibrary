@@ -49,6 +49,9 @@ SuggestWordLibrary/bin/*
 Core/WordPredictionLibrary/obj/*
 Core/WordPredictionLibrary/bin/*
 
+Core/WordForensicsLibrary/obj/*
+Core/WordForensicsLibrary/bin/*
+
 *.suo
 *.pdb
 *.cache
