@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+[assembly: InternalsVisibleTo("WordForensicsLibrary")]
 [assembly: AssemblyTitle("Word Prediction Library")]
 [assembly: AssemblyDescription("Suggest Next Word, Word Prediction Library")]
 [assembly: AssemblyConfiguration("")]
