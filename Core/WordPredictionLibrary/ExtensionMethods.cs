@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WordPredictionLibrary
+namespace WordPredictionLibrary.Core
 {
 	public static class FileInfoExtensionMethods
 	{
@@ -38,6 +38,25 @@ namespace WordPredictionLibrary
 			{				
 				return source.ToLowerInvariant();
 			}
+		}
+	}
+
+	public static class StringBuilderExtensionMethods
+	{
+		public static bool Contains(this StringBuilder source, string value)
+		{
+			if (source == null || string.IsNullOrWhiteSpace(value))
+			{
+				return false;
+			}
+				
+			string sourceString = source.ToString();
+			if (string.IsNullOrWhiteSpace(sourceString))
+			{
+				return false;
+			}
+
+			return sourceString.Contains(value);
 		}
 	}
 }

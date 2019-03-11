@@ -57,3 +57,4 @@ Core/WordForensicsLibrary/bin/*
 *.cache
 *.vhost.*
 *.FileListAbsolute.txt
+*.scgdat

@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using WordPredictionLibrary;
+using System.Collections.Generic;
+using WordPredictionLibrary.Core;
+using WordPredictionLibrary.Forensics;
 
 namespace SuggestWordLibrary
 {
@@ -47,6 +49,14 @@ namespace SuggestWordLibrary
 			MessageBox.Show(string.Format(format, args), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
+		private void tbOutput_KeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.A) // CTRL + A, Select all
+			{
+				tbOutput.SelectAll();
+			}
+		}
+
 		#endregion
 
 		bool IsDatasetDirty { get; set; }
@@ -82,7 +92,7 @@ namespace SuggestWordLibrary
 		/// </summary>		
 		private bool AskIfSaveFirst()
 		{
-			if (dataSet != null && dataSet.TotalWordsProcessed > 1)
+			if (dataSet != null && dataSet.TotalSampleSize > 1)
 			{
 				if (IsDatasetDirty)
 				{
@@ -141,20 +151,98 @@ namespace SuggestWordLibrary
 
 		private void UpdateLabels()
 		{
-			labelTotalWords.Text = string.Format("{0} Total Words", dataSet.TotalWordsProcessed);
-			labelUniqueWords.Text = string.Format("{0} Unique Words", dataSet.UniqueWordsCataloged);
+			labelTotalWords.Text = string.Format("{0} Total Words", dataSet.TotalSampleSize);
+			labelUniqueWords.Text = string.Format("{0} Unique Words", dataSet.UniqueWordCount);
 		}
 
 		private string ShowFileDialog(FileDialog dialog)
 		{
 			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{ 
+			{
 				return dialog.FileName;
 			}
 			else
-			{ 
-				return string.Empty; 
+			{
+				return string.Empty;
 			}
 		}
+
+		private void btnSuggest_Click(object sender, EventArgs e)
+		{
+			string input = tbOutput.Text.TrimEnd(' ', '\t', '\n');
+			if (!string.IsNullOrWhiteSpace(input))
+			{
+				int indexOfLastWord = input.LastIndexOf(' ');
+				if (indexOfLastWord == -1)
+				{
+					indexOfLastWord = 0;
+				}
+				string lastWord = tbOutput.Text.Substring(indexOfLastWord);
+				string suggestedWord = dataSet.SuggestNext(lastWord);
+
+				tbOutput.AppendText(string.Concat(" ", suggestedWord));
+			}
+		}
+
+		private void btnForensics_Click(object sender, EventArgs e)
+		{
+			string selectedFile = ShowFileDialog(openFileDialog);
+			if (!string.IsNullOrWhiteSpace(selectedFile) && File.Exists(selectedFile))
+			{
+				Stylometry forensics = new Stylometry(dataSet);
+
+				List<decimal> seqProbabilty = forensics.GetProbabilitySequence(selectedFile);
+				List<decimal> seqFrequency = forensics.GetFrequencySequence(selectedFile);
+				List<decimal> seqPopularity = forensics.GetPopularitySequence(selectedFile);
+
+				tbOutput.Text += string.Format("Sequence Probability Mean: {0} ({1})", forensics.GetSequenceMean(seqProbabilty), seqProbabilty.Sum()) + Environment.NewLine;
+				tbOutput.Text += string.Format("Sequence Popularity Mean: {0} ({1})", forensics.GetSequenceMean(seqPopularity), seqPopularity.Sum()) + Environment.NewLine;
+				tbOutput.Text += string.Format("Sequence Frequency Mean: {0} ({1})", forensics.GetSequenceMean(seqFrequency), seqFrequency.Sum()) + Environment.NewLine;
+				tbOutput.Text += "-------------------------------" + Environment.NewLine;
+				tbOutput.Text += "UniqueWordCount: " + forensics.GetUniqueWordCount() + Environment.NewLine;
+				tbOutput.Text += "TotalSampleSize: " + forensics.GetTotalSampleSize() + Environment.NewLine;
+				tbOutput.Text += "Variance: " + forensics.GetVariance() + Environment.NewLine;
+				tbOutput.Text += "StandardDeviation: " + forensics.GetStandardDeviation() + Environment.NewLine;
+				tbOutput.Text += "-------------------------------" + Environment.NewLine + Environment.NewLine;
+				tbOutput.Text += Path.GetFileNameWithoutExtension(selectedFile).ToUpperInvariant() + Environment.NewLine;
+				tbOutput.Text += string.Join(Environment.NewLine, seqPopularity.Select(d => d.ToString())) + Environment.NewLine;
+				//tbOutput.Text += string.Concat(Environment.NewLine, Environment.NewLine, Environment.NewLine,
+				//				Environment.NewLine, Environment.NewLine, Environment.NewLine,
+				//				"############################################", Environment.NewLine, 
+				//				"############################################", Environment.NewLine, 
+				//				"############################################", Environment.NewLine,
+				//				Environment.NewLine, Environment.NewLine, "SequenceFREQUENCY",Environment.NewLine,
+				//				string.Join(Environment.NewLine, seqFrequency.Select(d => d.ToString())),
+				//				Environment.NewLine, Environment.NewLine, Environment.NewLine);
+				//
+				//tbOutput.Text += "SequenceProbabiltyDelta" + Environment.NewLine;
+				//List<decimal> seqProbabiltyDelta = Stylometry.GetSequenceDelta(seqProbabilty);
+				//tbOutput.Text += string.Join(Environment.NewLine, seqProbabiltyDelta.Select(d => d.ToString()));
+				//tbOutput.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine;
+				//
+				//tbOutput.Text += "SequenceFREQUENCYDelta" + Environment.NewLine;
+				//List<decimal> seqFrequencyDelta = Stylometry.GetSequenceDelta(seqFrequency);
+				//tbOutput.Text += string.Join(Environment.NewLine, seqFrequencyDelta.Select(d => d.ToString()));
+				//tbOutput.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine;
+
+				IsDatasetDirty = true;
+				UpdateLabels();
+			}
+		}
+
+		private void btnVisualizeDict_Click(object sender, EventArgs e)
+		{
+
+			//tbOutput.Text = dataSet.ToString();
+
+			tbOutput.Text = dataSet.GetDistinctSortedWordFrequencyString();
+
+			//Stylometry visualize = new Stylometry(dataSet);
+
+			//visualize.GetCollocations();
+
+
+		}
+		
 	}
 }

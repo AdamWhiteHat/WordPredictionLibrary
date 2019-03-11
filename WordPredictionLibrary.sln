@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{D3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuggestWordLibrary", "SuggestWordLibrary\SuggestWordLibrary.csproj", "{72CE2E83-5CD6-4F46-AAED-EB27945E29DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordForensicsLibrary", "Core\WordForensicsLibrary\WordForensicsLibrary.csproj", "{87BEC7A9-6805-4FE5-B6EA-D06F4EB37B04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{72CE2E83-5CD6-4F46-AAED-EB27945E29DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72CE2E83-5CD6-4F46-AAED-EB27945E29DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72CE2E83-5CD6-4F46-AAED-EB27945E29DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87BEC7A9-6805-4FE5-B6EA-D06F4EB37B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87BEC7A9-6805-4FE5-B6EA-D06F4EB37B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87BEC7A9-6805-4FE5-B6EA-D06F4EB37B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87BEC7A9-6805-4FE5-B6EA-D06F4EB37B04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +38,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C5F5B6D7-462A-4DC3-86AD-E70BBBEBE029} = {0FFD86BD-39D4-419F-8F56-CCA2B153AE58}
 		{72CE2E83-5CD6-4F46-AAED-EB27945E29DC} = {D3E8A5CB-0CAA-4D1A-BD17-A08F3BAA8C0F}
+		{87BEC7A9-6805-4FE5-B6EA-D06F4EB37B04} = {0FFD86BD-39D4-419F-8F56-CCA2B153AE58}
 	EndGlobalSection
 EndGlobal

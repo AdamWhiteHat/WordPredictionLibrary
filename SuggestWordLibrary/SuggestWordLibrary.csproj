@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\..\..\..\Visual Studio 2015\Projects\_MyFramework\Dead Code Rules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -78,6 +79,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Core\WordForensicsLibrary\WordForensicsLibrary.csproj">
+      <Project>{87bec7a9-6805-4fe5-b6ea-d06f4eb37b04}</Project>
+      <Name>WordForensicsLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\WordPredictionLibrary\WordPredictionLibrary.csproj">
       <Project>{c5f5b6d7-462a-4dc3-86ad-e70bbbebe029}</Project>
       <Name>WordPredictionLibrary</Name>
