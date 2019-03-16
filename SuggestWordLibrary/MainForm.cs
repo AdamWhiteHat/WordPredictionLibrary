@@ -169,7 +169,15 @@ namespace SuggestWordLibrary
 
 		private void btnSuggest_Click(object sender, EventArgs e)
 		{
-			string input = tbOutput.Text.TrimEnd(' ', '\t', '\n');
+			string lastWord = extractLastWord(tbOutput.Text);
+			string suggestedWord = dataSet.SuggestNext(lastWord);
+
+			tbOutput.AppendText(string.Concat(" ", suggestedWord));
+		}
+
+		private string extractLastWord(string text)
+		{
+			string input = text.TrimEnd(' ', '\t', '\n');
 			if (!string.IsNullOrWhiteSpace(input))
 			{
 				int indexOfLastWord = input.LastIndexOf(' ');
@@ -177,13 +185,11 @@ namespace SuggestWordLibrary
 				{
 					indexOfLastWord = 0;
 				}
-				string lastWord = tbOutput.Text.Substring(indexOfLastWord);
-				string suggestedWord = dataSet.SuggestNext(lastWord);
-
-				tbOutput.AppendText(string.Concat(" ", suggestedWord));
+				string lastWord = tbOutput.Text.Substring(indexOfLastWord).Trim();
+				return lastWord;
 			}
+			return string.Empty;
 		}
-
 		private void btnForensics_Click(object sender, EventArgs e)
 		{
 			string selectedFile = ShowFileDialog(openFileDialog);
@@ -232,17 +238,22 @@ namespace SuggestWordLibrary
 
 		private void btnVisualizeDict_Click(object sender, EventArgs e)
 		{
+			string lastWord = extractLastWord(tbOutput.Text);
 
-			//tbOutput.Text = dataSet.ToString();
+			if (string.IsNullOrWhiteSpace(lastWord))
+			{
+				tbOutput.Text = dataSet.GetDistinctSortedWordFrequencyString();
+			}
+			else
+			{
+				Dictionary<string, Word> dict = dataSet.GetInternalDictionary();
+				Word word = dict[lastWord];
 
-			tbOutput.Text = dataSet.GetDistinctSortedWordFrequencyString();
+				tbOutput.AppendText($"{Environment.NewLine}\t");
+				tbOutput.AppendText(string.Join($"{Environment.NewLine}\t", word.SuggestNextWords(-1)));
 
-			//Stylometry visualize = new Stylometry(dataSet);
-
-			//visualize.GetCollocations();
-
-
+			}
+			
 		}
-		
 	}
 }

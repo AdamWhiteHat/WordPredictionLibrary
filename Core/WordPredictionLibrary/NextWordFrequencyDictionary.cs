@@ -64,7 +64,7 @@ namespace WordPredictionLibrary.Core
 					result.AppendFormat("{0}:{1}   ", tuple.Item2, tuple.Item1.Value);
 				}
 
-				result.AppendLine("");				
+				result.AppendLine("");
 			}
 			return result.ToString();
 		}
@@ -112,6 +112,10 @@ namespace WordPredictionLibrary.Core
 
 		public IEnumerable<string> TakeTop(int count)
 		{
+			if (count == -1)
+			{
+				return GetNextWordByFrequencyDescending();
+			}
 			return GetNextWordByFrequencyDescending().Take(count);
 		}
 
@@ -134,7 +138,7 @@ namespace WordPredictionLibrary.Core
 
 		#endregion
 
-		
+
 		/// <summary>
 		/// The frequency is a value between 0 and 1 that is a proportional fraction of 
 		/// the number of times it was observed out of all the data observed.

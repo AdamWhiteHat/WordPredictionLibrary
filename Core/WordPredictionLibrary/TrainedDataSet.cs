@@ -50,6 +50,11 @@ namespace WordPredictionLibrary.Core
 			return _wordDictionary.GetFrequencyDictionary();
 		}
 
+		public Dictionary<string, Word> GetInternalDictionary()
+		{
+			return _wordDictionary.GetInternalDictionary();
+		}
+
 		public List<Word> GetDistinctSortedWords()
 		{
 			return _wordDictionary.GetDistinctSortedWordsList();

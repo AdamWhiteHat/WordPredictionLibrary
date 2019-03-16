@@ -135,7 +135,7 @@
 			this.labelUniqueWords.TabIndex = 6;
 			this.labelUniqueWords.Text = "{0} Unique Words";
 			this.labelUniqueWords.Visible = false;
-			// 
+			// 			
 			// openFileDialog
 			// 
 			this.openFileDialog.AddExtension = false;
@@ -164,6 +164,7 @@
 			this.tbOutput.Location = new System.Drawing.Point(147, 29);
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
+			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.tbOutput.Size = new System.Drawing.Size(271, 249);
 			this.tbOutput.TabIndex = 2;
 			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
@@ -187,7 +188,7 @@
 			this.btnForensics.Text = "Forensics";
 			this.btnForensics.UseVisualStyleBackColor = true;
 			this.btnForensics.Click += new System.EventHandler(this.btnForensics_Click);
-			// 
+			//
 			// btnVisualizeDict
 			// 
 			this.btnVisualizeDict.Location = new System.Drawing.Point(4, 158);

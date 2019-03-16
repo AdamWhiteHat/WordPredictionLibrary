@@ -55,6 +55,11 @@ namespace WordPredictionLibrary.Core
 			_internalDictionary = dictionary;
 		}
 
+		public Dictionary<string, Word> GetInternalDictionary()
+		{
+			return _internalDictionary;
+		}
+
 		public override string ToString()
 		{
 			if (!isOrdered)
