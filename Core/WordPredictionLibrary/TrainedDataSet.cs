@@ -60,6 +60,16 @@ namespace WordPredictionLibrary.Core
 			return _wordDictionary.GetDistinctSortedWordsList();
 		}
 
+		public string GetEntireDictionaryString()
+		{
+			return string.Join(Environment.NewLine, GetDistinctSortedWords().Select(w => w.ToString()));
+		}
+
+		public string GetDistinctSortedWordString()
+		{
+			return string.Join(Environment.NewLine, GetDistinctSortedWords().Select(w => w.Value));
+		}
+
 		public string GetDistinctSortedWordFrequencyString()
 		{
 			return _wordDictionary.GetDistinctSortedWordFrequencyString();

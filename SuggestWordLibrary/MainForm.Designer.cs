@@ -43,6 +43,7 @@
 			this.btnSuggest = new System.Windows.Forms.Button();
 			this.btnForensics = new System.Windows.Forms.Button();
 			this.btnVisualizeDict = new System.Windows.Forms.Button();
+			this.btnDumpAll = new System.Windows.Forms.Button();
 			this.flowLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -69,6 +70,7 @@
 			this.flowLayoutPanel.Controls.Add(this.labelTotalWords);
 			this.flowLayoutPanel.Controls.Add(this.labelUniqueWords);
 			this.flowLayoutPanel.Controls.Add(this.btnVisualizeDict);
+			this.flowLayoutPanel.Controls.Add(this.btnDumpAll);
 			this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.flowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
@@ -135,7 +137,7 @@
 			this.labelUniqueWords.TabIndex = 6;
 			this.labelUniqueWords.Text = "{0} Unique Words";
 			this.labelUniqueWords.Visible = false;
-			// 			
+			// 
 			// openFileDialog
 			// 
 			this.openFileDialog.AddExtension = false;
@@ -144,9 +146,7 @@
 			// 
 			// treeView1
 			// 
-			this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.treeView1.Location = new System.Drawing.Point(422, 7);
 			this.treeView1.Name = "treeView1";
 			treeNode1.Name = "RootNode";
@@ -188,7 +188,7 @@
 			this.btnForensics.Text = "Forensics";
 			this.btnForensics.UseVisualStyleBackColor = true;
 			this.btnForensics.Click += new System.EventHandler(this.btnForensics_Click);
-			//
+			// 
 			// btnVisualizeDict
 			// 
 			this.btnVisualizeDict.Location = new System.Drawing.Point(4, 158);
@@ -198,6 +198,16 @@
 			this.btnVisualizeDict.Text = "Visualize dictionary...";
 			this.btnVisualizeDict.UseVisualStyleBackColor = true;
 			this.btnVisualizeDict.Click += new System.EventHandler(this.btnVisualizeDict_Click);
+			// 
+			// btnDumpAll
+			// 
+			this.btnDumpAll.Location = new System.Drawing.Point(4, 187);
+			this.btnDumpAll.Name = "btnDumpAll";
+			this.btnDumpAll.Size = new System.Drawing.Size(121, 38);
+			this.btnDumpAll.TabIndex = 7;
+			this.btnDumpAll.Text = "Dump All Words and Following Words";
+			this.btnDumpAll.UseVisualStyleBackColor = true;
+			this.btnDumpAll.Click += new System.EventHandler(this.btnDumpAll_Click);
 			// 
 			// MainForm
 			// 
@@ -234,6 +244,7 @@
 		private System.Windows.Forms.Button btnSuggest;
 		private System.Windows.Forms.Button btnForensics;
 		private System.Windows.Forms.Button btnVisualizeDict;
+		private System.Windows.Forms.Button btnDumpAll;
 	}
 }
 

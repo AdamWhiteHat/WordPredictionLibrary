@@ -242,7 +242,7 @@ namespace SuggestWordLibrary
 
 			if (string.IsNullOrWhiteSpace(lastWord))
 			{
-				tbOutput.Text = dataSet.GetDistinctSortedWordFrequencyString();
+				tbOutput.Text = dataSet.GetDistinctSortedWordString(); // dataSet.GetDistinctSortedWordFrequencyString();
 			}
 			else
 			{
@@ -254,6 +254,15 @@ namespace SuggestWordLibrary
 
 			}
 			
+		}
+
+		private void btnDumpAll_Click(object sender, EventArgs e)
+		{
+			string selectedFile = ShowFileDialog(openFileDialog);
+			if (!string.IsNullOrWhiteSpace(selectedFile))
+			{
+				File.WriteAllText(selectedFile, dataSet.GetEntireDictionaryString());
+			}
 		}
 	}
 }
