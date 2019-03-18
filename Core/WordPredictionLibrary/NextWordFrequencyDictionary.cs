@@ -34,7 +34,9 @@ namespace WordPredictionLibrary.Core
 
 		public override string ToString()
 		{
-			List<Tuple<Word, decimal>> tupleList = OrderByFrequencyDescending()
+			_orderedDictionary = _internalDictionary.OrderByFrequencyDescending();
+
+			List<Tuple<Word, decimal>> tupleList = _orderedDictionary
 														.Select(kvp => new Tuple<Word, decimal>(kvp.Key, kvp.Value))
 														.ToList();
 			Tuple<Word, decimal> first = tupleList.FirstOrDefault();
@@ -59,7 +61,7 @@ namespace WordPredictionLibrary.Core
 
 				result.AppendFormat(new string(Enumerable.Repeat<char>(' ', padding).ToArray()));
 
-				foreach(Tuple<Word, decimal> tuple in words)
+				foreach (Tuple<Word, decimal> tuple in words)
 				{
 					result.AppendFormat("{0}:{1}   ", tuple.Item2, tuple.Item1.Value);
 				}
@@ -110,6 +112,11 @@ namespace WordPredictionLibrary.Core
 			return GetNextWordByFrequencyDescending().FirstOrDefault();
 		}
 
+		public string GetNextWord(string previousWord)
+		{
+			return GetNextWordByFrequencyDescending(previousWord).FirstOrDefault(); ;
+		}
+
 		public IEnumerable<string> TakeTop(int count)
 		{
 			if (count == -1)
@@ -119,22 +126,35 @@ namespace WordPredictionLibrary.Core
 			return GetNextWordByFrequencyDescending().Take(count);
 		}
 
+		public IEnumerable<string> TakeTop(string previousWord, int count)
+		{
+			if (count == -1)
+			{
+				return GetNextWordByFrequencyDescending(previousWord);
+			}
+			return GetNextWordByFrequencyDescending(previousWord).Take(count);
+		}
+
 		public IEnumerable<string> GetNextWordByFrequencyDescending()
 		{
-			return OrderByFrequencyDescending().Select(kvp => kvp.Key.Value);
+			_orderedDictionary = _internalDictionary.OrderByFrequencyDescending();
+			return _orderedDictionary.Select(kvp => kvp.Key.Value);
+		}
+
+		public IEnumerable<string> GetNextWordByFrequencyDescending(string previousWord)
+		{
+			_orderedDictionary = FilterDictionaryByPreviousWord(previousWord).OrderByFrequencyDescending();
+			return _orderedDictionary.Select(kvp => kvp.Key.Value);
+		}
+
+
+		public Dictionary<Word, decimal> FilterDictionaryByPreviousWord(string previousWord)
+		{
+			Dictionary<Word, decimal> result = _internalDictionary.Where(w => w.Key.Value == previousWord).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			return result;
 		}
 
 		private IOrderedEnumerable<KeyValuePair<Word, decimal>> _orderedDictionary = null;
-		public IOrderedEnumerable<KeyValuePair<Word, decimal>> OrderByFrequencyDescending()
-		{
-			// If we haven't set FrequencyDictionary yet OR it is out of date (dict has more entries)
-			if (_orderedDictionary == null || _internalDictionary.Count > _orderedDictionary.Count())
-			{
-				_orderedDictionary = _internalDictionary.OrderByDescending(kvp => kvp.Value);
-			}
-
-			return _orderedDictionary;
-		}
 
 		#endregion
 

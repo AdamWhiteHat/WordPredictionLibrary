@@ -15,6 +15,7 @@ namespace WordPredictionLibrary.Core
 		internal List<Word> Words { get { return _internalDictionary.Values.ToList(); } }
 		internal Dictionary<string, Word> _internalDictionary = null;
 		internal bool isOrdered = false;
+		internal static string StartPlaceholder = "{{start}}";
 		internal static string EndPlaceholder = "{{end}}";
 		public static decimal noMatchValue = 0;
 
@@ -27,14 +28,13 @@ namespace WordPredictionLibrary.Core
 					isOrdered = true;
 
 					Dictionary<string, Word> newDict = _internalDictionary.OrderByDescending(kvp => kvp.Value.AbsoluteFrequency).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
 					_internalDictionary = newDict;
+
 					// Sort every Word's internal dictionary
 					foreach (Word word in _internalDictionary.Values)
 					{
-						word._nextWordDictionary.OrderByFrequencyDescending();
+						word.OrderInternalDictionary();
 					}
-
 				}
 			}
 		}
@@ -91,35 +91,40 @@ namespace WordPredictionLibrary.Core
 		{
 			if (sentence == null || sentence.Count < 1) { return; }
 			sentence = sentence.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+			sentence = sentence.Select(s => s.TryToLower()).ToList();
 
-			string lastWord = string.Empty;
+			List<string> previousWords = new List<string>();
+			string lastWord = StartPlaceholder;
 			foreach (string word in sentence)
 			{
+				previousWords.Add(lastWord);
 				if (string.IsNullOrWhiteSpace(word))
 				{
 					continue;
 				}
 				if (!string.IsNullOrEmpty(lastWord))
 				{
-					Add(lastWord, word);
+					Add(previousWords, lastWord, word);
 				}
 				lastWord = word;
 			}
-			Add(lastWord, EndPlaceholder);
+			Add(previousWords, lastWord, EndPlaceholder);
 		}
 
-		internal void Add(string current, string next)
+		internal void Add(List<string> previous, string current, string next)
 		{
 			if (string.IsNullOrWhiteSpace(current))
 			{
 				return;
 			}
+			List<string> previousLower = previous.Select(s => s.TryToLower()).ToList();
 			string currentLower = current.TryToLower();
 			string nextLower = next.TryToLower();
 
 			CreateIfRequired(currentLower);
 			CreateIfRequired(nextLower);
 			Word currentWord = _internalDictionary[currentLower];
+			currentWord.AddPreviousWords(previousLower);
 			currentWord.AddNextWord(_internalDictionary[nextLower]);
 		}
 
@@ -150,12 +155,32 @@ namespace WordPredictionLibrary.Core
 			return string.Empty;
 		}
 
+		public string SuggestNextWord(string fromWord, string previousWord)
+		{
+			fromWord = fromWord.TryToLower();
+			if (_internalDictionary.ContainsKey(fromWord))
+			{
+				return _internalDictionary[fromWord].SuggestNextWord(previousWord);
+			}
+			return string.Empty;
+		}
+
 		public IEnumerable<string> Suggest(string fromWord, int quantity)
 		{
 			fromWord = fromWord.TryToLower();
 			if (_internalDictionary.ContainsKey(fromWord))
 			{
 				return _internalDictionary[fromWord].SuggestNextWords(quantity);
+			}
+			return new List<string>() { };
+		}
+
+		public IEnumerable<string> Suggest(string fromWord, string previousWord, int quantity)
+		{
+			fromWord = fromWord.TryToLower();
+			if (_internalDictionary.ContainsKey(fromWord))
+			{
+				return _internalDictionary[fromWord].SuggestNextWords(previousWord, quantity);
 			}
 			return new List<string>() { };
 		}

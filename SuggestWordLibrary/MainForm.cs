@@ -190,6 +190,7 @@ namespace SuggestWordLibrary
 			}
 			return string.Empty;
 		}
+
 		private void btnForensics_Click(object sender, EventArgs e)
 		{
 			string selectedFile = ShowFileDialog(openFileDialog);

@@ -27,7 +27,7 @@ namespace WordPredictionLibrary.Core
 		{
 			_wordDictionary = dictionary;
 		}
-		
+
 		#endregion
 
 		#region Suggest & Train
@@ -42,8 +42,10 @@ namespace WordPredictionLibrary.Core
 			List<List<string>> paragraphs = TokenizeTextFile(paragraphFile.FullName);
 			_wordDictionary.Train(paragraphs);
 		}
-			
+
 		#endregion
+
+		#region Get Dictionary
 
 		public Dictionary<Word, decimal> GetFrequencyDictionary()
 		{
@@ -75,12 +77,14 @@ namespace WordPredictionLibrary.Core
 			return _wordDictionary.GetDistinctSortedWordFrequencyString();
 		}
 
+		#endregion
+
 		internal static StringBuilder ReplaceWhile(string input, string oldValue, string newValue)
 		{
 			StringBuilder result = new StringBuilder(input);
 
 			int beforeLength = 0;
-			int afterLength = 0;			
+			int afterLength = 0;
 			do
 			{
 				beforeLength = result.Length;
@@ -89,8 +93,8 @@ namespace WordPredictionLibrary.Core
 
 				afterLength = result.Length;
 			}
-			while((beforeLength - afterLength) > 0);
-						
+			while ((beforeLength - afterLength) > 0);
+
 			return result;
 		}
 
@@ -113,7 +117,7 @@ namespace WordPredictionLibrary.Core
 				.Replace("{", " ").Replace("}", " ").Replace("<", " ").Replace(">", " ")
 				.Replace("+", " ").Replace("=", " ").Replace("$", " ").Replace("&", " ")
 				.Replace("@", " ").Replace("#", " ").Replace("%", " ")
-				.Replace("^", " ").Replace("*", " ").Replace("~", " ")				
+				.Replace("^", " ").Replace("*", " ").Replace("~", " ")
 				;
 
 			massagedFileText
@@ -140,7 +144,7 @@ namespace WordPredictionLibrary.Core
 					.Replace("6", "six ")
 					.Replace("7", "seven ")
 					.Replace("8", "eight ")
-					.Replace("9", "nine ")					
+					.Replace("9", "nine ")
 					;
 			}
 
@@ -206,7 +210,7 @@ namespace WordPredictionLibrary.Core
 				string diff = string.Join("\n", diffIndices.Select(i => i.ToString())); //new string(diffChars.ToArray());
 				throw new Exception(diff);
 			}
-						
+
 			string outputFilename = "NORMALIZED__" + Path.GetFileName(filename);
 			File.WriteAllText(outputFilename, sanitizedFileText);
 
@@ -224,18 +228,18 @@ namespace WordPredictionLibrary.Core
 				result.Add(words);
 			}
 
-//#if DEBUG
-//			string debugParsedFileFilename = string.Format("Debug.{0}.Parsed.{1}.txt", Path.GetFileNameWithoutExtension(filename), totalWordCount);
-//			FileInfo parseFile = new FileInfo(debugParsedFileFilename).RenameIfExists();
-//			int counter = 1;
-//			File.AppendAllText(
-//				parseFile.FullName,
-//				string.Join(
-//					Environment.NewLine,
-//					sentences.Select(l =>
-//						string.Format("Sentence{0} = \"{1}\".", counter++, string.Join(" ", l))
-//			)	)	);
-//#endif
+			//#if DEBUG
+			//			string debugParsedFileFilename = string.Format("Debug.{0}.Parsed.{1}.txt", Path.GetFileNameWithoutExtension(filename), totalWordCount);
+			//			FileInfo parseFile = new FileInfo(debugParsedFileFilename).RenameIfExists();
+			//			int counter = 1;
+			//			File.AppendAllText(
+			//				parseFile.FullName,
+			//				string.Join(
+			//					Environment.NewLine,
+			//					sentences.Select(l =>
+			//						string.Format("Sentence{0} = \"{1}\".", counter++, string.Join(" ", l))
+			//			)	)	);
+			//#endif
 			return result;
 		}
 
@@ -258,7 +262,8 @@ namespace WordPredictionLibrary.Core
 			public static string RootNode = "TrainedDataSet";
 			public static string KeyValuePairNode = "KeyValuePair";
 			public static string DictionarySizeNode = "DictionarySize";
-			public static string DictionaryNode = "NextwordDictionary";
+			public static string NextWordDictionaryNode = "NextWordDictionary";
+			public static string PreviousWordsDictionaryNode = "PreviousWordsDictionary";
 			public static string TotalWordsProcessedNode = "TotalWordsProcessed";
 		}
 
@@ -274,14 +279,14 @@ namespace WordPredictionLibrary.Core
 
 			XElement totalWordsNode = rootNode.XPathSelectElement(XmlElementNames.TotalWordsProcessedNode);
 			if (totalWordsNode == null) { return new TrainedDataSet(); }
-			int totalWordsProcessed = 0; 
+			int totalWordsProcessed = 0;
 			int.TryParse(totalWordsNode.Value, out totalWordsProcessed);
 
 			List<XElement> wordNodes = rootNode.XPathSelectElements(XmlElementNames.WordNode).ToList();
 			if (wordNodes == null || wordNodes.Count < 1) { return new TrainedDataSet(); }
 
 			// Create a Word object for each Word before populating NextWordFrequencyDictionary
-			Dictionary<string, Word> dictionary = new Dictionary<string, Word>();			
+			Dictionary<string, Word> dictionary = new Dictionary<string, Word>();
 			foreach (XElement wordNode in wordNodes)
 			{
 				XElement textNode = wordNode.XPathSelectElement(XmlElementNames.ValueNode);
@@ -289,17 +294,17 @@ namespace WordPredictionLibrary.Core
 
 				if (textNode == null || countNode == null) { continue; }
 
-				int ttlWordCount = 0; 
+				int ttlWordCount = 0;
 				int.TryParse(countNode.Value, out ttlWordCount);
 
-				dictionary.Add(textNode.Value,  new Word(textNode.Value));
+				dictionary.Add(textNode.Value, new Word(textNode.Value));
 			}
 
 			// Now populate NextWordFrequencyDictionary
 			foreach (XElement wordNode in wordNodes)
 			{
 				XElement textNode = wordNode.XPathSelectElement(XmlElementNames.ValueNode);
-				XElement dictNode = wordNode.XPathSelectElement(XmlElementNames.DictionaryNode);
+				XElement dictNode = wordNode.XPathSelectElement(XmlElementNames.NextWordDictionaryNode);
 
 				if (textNode == null || dictNode == null) { continue; }
 				if (!dictionary.Keys.Contains(textNode.Value)) { continue; }
@@ -320,6 +325,28 @@ namespace WordPredictionLibrary.Core
 					Word keyWord = dictionary[keyText];
 					word._nextWordDictionary._internalDictionary.Add(keyWord, valueInt);
 				}
+
+				XElement prevDictNode = wordNode.XPathSelectElement(XmlElementNames.PreviousWordsDictionaryNode);
+
+				List<XElement> kvpPrevNodes = dictNode.XPathSelectElements(XmlElementNames.KeyValuePairNode).ToList();
+				foreach (XElement kvpNode in kvpPrevNodes)
+				{
+					XElement keyNode = kvpNode.XPathSelectElement(XmlElementNames.KeyNode);
+					XElement valueNode = kvpNode.XPathSelectElement(XmlElementNames.ValueNode);
+
+					string keyText = keyNode.Value;
+					List<string> previousWords = keyText.Split(new char[] { ' ' }).ToList();
+					int prevCount = 0; int.TryParse(valueNode.Value, out prevCount);
+
+					if (!word._previousWordsDictionary.ContainsKey(previousWords))
+					{
+						word._previousWordsDictionary.Add(previousWords, prevCount);
+					}
+					else
+					{
+						word._previousWordsDictionary[previousWords] = prevCount;
+					}
+				}
 			}
 
 			if (dictionary != null) { return new TrainedDataSet(new WordDictionary(dictionary)); }
@@ -328,7 +355,7 @@ namespace WordPredictionLibrary.Core
 
 		public static bool SerializeToXml(TrainedDataSet dataset, string filename)
 		{
-			if (dataset == null	|| dataset._wordDictionary == null
+			if (dataset == null || dataset._wordDictionary == null
 				|| dataset._wordDictionary.UniqueWordCount < 1) { return false; }
 
 			dataset._wordDictionary.OrderInternalDictionary();
@@ -338,16 +365,32 @@ namespace WordPredictionLibrary.Core
 					new XElement(XmlElementNames.TotalWordsProcessedNode, dataset._wordDictionary.TotalSampleSize),
 					dataset._wordDictionary.Words.Select(word =>
 						new XElement(XmlElementNames.WordNode,
+							//  <Word>	
+							// <Value>
 							new XElement(XmlElementNames.ValueNode, word.Value),
+
+							// <NextWordDictionary>
 							new XElement(XmlElementNames.DictionarySizeNode, word.AbsoluteFrequency),
-							new XElement(XmlElementNames.DictionaryNode,
+							new XElement(XmlElementNames.NextWordDictionaryNode,
 								word._nextWordDictionary._internalDictionary.Select(kvp =>
 									new XElement(XmlElementNames.KeyValuePairNode,
 										new XElement(XmlElementNames.KeyNode, kvp.Key.Value),
 										new XElement(XmlElementNames.ValueNode, kvp.Value)
 									)
 								)
+							),
+
+							// <PreviousWordsDictionary>
+							new XElement(XmlElementNames.PreviousWordsDictionaryNode,
+								word._previousWordsDictionary.Select(kvp =>
+									new XElement(XmlElementNames.KeyValuePairNode,
+										new XElement(XmlElementNames.KeyNode, string.Join(" ", kvp.Key)),
+										new XElement(XmlElementNames.ValueNode, kvp.Value)
+									)
+								)
 							)
+
+						// </Word>
 						)
 					)
 				)

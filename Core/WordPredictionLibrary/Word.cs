@@ -12,13 +12,18 @@ namespace WordPredictionLibrary.Core
 		public decimal NextWordDistinctCount { get { return _nextWordDictionary.DistinctWordCount; } }
 		public decimal AbsoluteFrequency { get { return _nextWordDictionary.TotalWordCount; } }
 
-		internal NextWordFrequencyDictionary _nextWordDictionary;
 		public static decimal noMatchValue = 0;
+
+		internal NextWordFrequencyDictionary _nextWordDictionary;
+
+		internal Dictionary<List<string>, int> _previousWordsDictionary;
+
 
 		#region Constructors
 
 		public Word()
 		{
+			_previousWordsDictionary = new Dictionary<List<string>, int>(new WordListComparer());
 			_nextWordDictionary = new NextWordFrequencyDictionary();
 		}
 
@@ -80,18 +85,30 @@ namespace WordPredictionLibrary.Core
 						"[\"{0}\" - {1}/{2}:",
 						Value.ToUpperInvariant(),
 						NextWordDistinctCount,
-						AbsoluteFrequency				
+						AbsoluteFrequency
 			);
 			result.AppendLine("");
-			result.Append(_nextWordDictionary.ToString());				
+			result.Append(_nextWordDictionary.ToString());
 			result.Append("],");
-			
-			return result.ToString();		
+
+			return result.ToString();
 		}
 
 		#endregion
 
 		#region Dictionary Altering Methods
+
+		public void AddPreviousWords(List<string> previousWords)
+		{
+			if (_previousWordsDictionary.ContainsKey(previousWords))
+			{
+				_previousWordsDictionary[previousWords] += 1;
+			}
+			else
+			{
+				_previousWordsDictionary.Add(previousWords, 1);
+			}
+		}
 
 		public void AddNextWord(Word word)
 		{
@@ -103,9 +120,19 @@ namespace WordPredictionLibrary.Core
 			return _nextWordDictionary.GetNextWord();
 		}
 
+		public string SuggestNextWord(string previousWord)
+		{
+			return _nextWordDictionary.GetNextWord(previousWord);
+		}
+
 		public IEnumerable<string> SuggestNextWords(int count)
 		{
 			return _nextWordDictionary.TakeTop(count);
+		}
+
+		public IEnumerable<string> SuggestNextWords(string previousWord, int count)
+		{
+			return _nextWordDictionary.TakeTop(previousWord, count);
 		}
 
 		#endregion
@@ -154,6 +181,15 @@ namespace WordPredictionLibrary.Core
 			if (_nextWordDictionary == null) { return noMatchValue; }
 
 			return (decimal)Math.Sqrt((double)GetVariance());
+		}
+
+		public void OrderInternalDictionary()
+		{
+			Dictionary<Word,decimal> nextDict =_nextWordDictionary._internalDictionary.OrderByFrequencyDescending().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			_nextWordDictionary = new NextWordFrequencyDictionary(nextDict);
+
+			Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListComparer());
+			_previousWordsDictionary = previousDict;
 		}
 
 	}
