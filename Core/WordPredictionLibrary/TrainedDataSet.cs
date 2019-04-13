@@ -245,6 +245,11 @@ namespace WordPredictionLibrary.Core
 			return result;
 		}
 
+		public void OrderInternalDictionary()
+		{
+			_wordDictionary.OrderInternalDictionary();
+		}
+
 		#endregion
 
 		#region Find

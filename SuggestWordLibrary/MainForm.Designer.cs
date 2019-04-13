@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("RootNode");
 			this.btnOpen = new System.Windows.Forms.Button();
 			this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.btnNew = new System.Windows.Forms.Button();
@@ -46,11 +45,13 @@
 			this.tbBreath = new System.Windows.Forms.TextBox();
 			this.btnViewGraph = new System.Windows.Forms.Button();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-			this.treeView1 = new System.Windows.Forms.TreeView();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.tbOutput = new System.Windows.Forms.TextBox();
 			this.btnSuggest = new System.Windows.Forms.Button();
 			this.btnForensics = new System.Windows.Forms.Button();
+			this.btnViewSelectedWordGraph = new System.Windows.Forms.Button();
+			this.btnPopulateList = new System.Windows.Forms.Button();
+			this.listWords = new System.Windows.Forms.ListBox();
 			this.flowLayoutPanel.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
@@ -241,18 +242,6 @@
 			this.openFileDialog.CheckFileExists = false;
 			this.openFileDialog.Title = "Open suggestion dictionary...";
 			// 
-			// treeView1
-			// 
-			this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.treeView1.Location = new System.Drawing.Point(422, 7);
-			this.treeView1.Name = "treeView1";
-			treeNode2.Name = "RootNode";
-			treeNode2.Text = "RootNode";
-			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
-			this.treeView1.Size = new System.Drawing.Size(145, 208);
-			this.treeView1.TabIndex = 4;
-			// 
 			// tbOutput
 			// 
 			this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -286,13 +275,44 @@
 			this.btnForensics.UseVisualStyleBackColor = true;
 			this.btnForensics.Click += new System.EventHandler(this.btnForensics_Click);
 			// 
+			// btnViewSelectedWordGraph
+			// 
+			this.btnViewSelectedWordGraph.Location = new System.Drawing.Point(423, 276);
+			this.btnViewSelectedWordGraph.Name = "btnViewSelectedWordGraph";
+			this.btnViewSelectedWordGraph.Size = new System.Drawing.Size(145, 23);
+			this.btnViewSelectedWordGraph.TabIndex = 8;
+			this.btnViewSelectedWordGraph.Text = "View selected word↑ graph";
+			this.btnViewSelectedWordGraph.UseVisualStyleBackColor = true;
+			this.btnViewSelectedWordGraph.Click += new System.EventHandler(this.btnViewSelectedWordGraph_Click);
+			// 
+			// btnPopulateList
+			// 
+			this.btnPopulateList.Location = new System.Drawing.Point(424, 29);
+			this.btnPopulateList.Name = "btnPopulateList";
+			this.btnPopulateList.Size = new System.Drawing.Size(143, 23);
+			this.btnPopulateList.TabIndex = 9;
+			this.btnPopulateList.Text = "Populate List ↓";
+			this.btnPopulateList.UseVisualStyleBackColor = true;
+			this.btnPopulateList.Click += new System.EventHandler(this.btnPopulateList_Click);
+			// 
+			// listWords
+			// 
+			this.listWords.FormattingEnabled = true;
+			this.listWords.Location = new System.Drawing.Point(424, 58);
+			this.listWords.Name = "listWords";
+			this.listWords.ScrollAlwaysVisible = true;
+			this.listWords.Size = new System.Drawing.Size(143, 212);
+			this.listWords.TabIndex = 10;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(571, 329);
+			this.Controls.Add(this.listWords);
+			this.Controls.Add(this.btnPopulateList);
 			this.Controls.Add(this.btnForensics);
-			this.Controls.Add(this.treeView1);
+			this.Controls.Add(this.btnViewSelectedWordGraph);
 			this.Controls.Add(this.btnSuggest);
 			this.Controls.Add(this.tbOutput);
 			this.Controls.Add(this.flowLayoutPanel);
@@ -315,7 +335,6 @@
 		private System.Windows.Forms.Button btnTrain;
 		private System.Windows.Forms.Label labelTotalWords;
 		private System.Windows.Forms.Label labelUniqueWords;
-		private System.Windows.Forms.TreeView treeView1;
 		private System.Windows.Forms.Button btnNew;
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
@@ -331,6 +350,9 @@
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox tbDepth;
+		private System.Windows.Forms.Button btnViewSelectedWordGraph;
+		private System.Windows.Forms.Button btnPopulateList;
+		private System.Windows.Forms.ListBox listWords;
 	}
 }
 

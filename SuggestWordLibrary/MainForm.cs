@@ -317,5 +317,49 @@ namespace SuggestWordLibrary
 				BuildGraphRecursive(ref graph, nextWord, breadth-1, depth-1);
 			}
 		}
+
+		private void btnPopulateList_Click(object sender, EventArgs e)
+		{
+			List<Word> words = dataSet.GetDistinctSortedWords();
+
+			foreach (Word word in words)
+			{
+				listWords.Items.Add(word.Value);
+			}
+			
+		}
+
+		private void btnViewSelectedWordGraph_Click(object sender, EventArgs e)
+		{
+			if (listWords.SelectedIndex == -1)
+			{
+				MessageBox.Show("Select a word from the ListBox above first.");
+				return;
+			}
+
+			dataSet.OrderInternalDictionary();
+
+			string selectedItem = listWords.SelectedItem.ToString();
+			Word selectedWord = dataSet.Find(selectedItem);
+
+			string centerNodeWord = selectedWord.Value;
+			
+			List<string> nextWords = selectedWord.GetNextWordDictionary().GetNextWordByFrequencyDescending().ToList();
+			List<string> previousWords = dataSet.GetDistinctSortedWords().Where(wrd => wrd.GetNextWordDictionary().Contains(centerNodeWord)).Select(wrd => wrd.Value).ToList();
+
+			Graph graph = new Graph("WordsGraph");
+			foreach (string nextWord in nextWords)
+			{
+				graph.AddEdge(centerNodeWord, nextWord);
+			}
+
+			foreach (string previousWord in previousWords)
+			{
+				graph.AddEdge(previousWord, centerNodeWord);
+			}
+
+			GraphVisualizer visualizerForm = new GraphVisualizer(graph);
+			visualizerForm.Show(this);
+		}
 	}
 }

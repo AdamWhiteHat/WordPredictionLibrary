@@ -205,11 +205,17 @@ namespace WordPredictionLibrary.Core
 
 		public void OrderInternalDictionary()
 		{
-			Dictionary<Word,decimal> nextDict =_nextWordDictionary._internalDictionary.OrderByFrequencyDescending().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-			_nextWordDictionary = new NextWordFrequencyDictionary(nextDict);
+			if (_nextWordDictionary._internalDictionary.Any())
+			{
+				Dictionary<Word, decimal> nextDict = _nextWordDictionary._internalDictionary.OrderByFrequencyDescending().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+				_nextWordDictionary = new NextWordFrequencyDictionary(nextDict);
+			}
 
-			Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListComparer());
-			_previousWordsDictionary = previousDict;
+			if (_previousWordsDictionary.Any())
+			{
+				Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListComparer());
+				_previousWordsDictionary = previousDict;
+			}
 		}
 
 		#endregion
