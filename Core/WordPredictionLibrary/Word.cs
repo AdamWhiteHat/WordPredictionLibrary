@@ -137,15 +137,27 @@ namespace WordPredictionLibrary.Core
 
 		#endregion
 
+		#region Get Dictionary
+
 		Dictionary<Word, decimal> _freqDict = null;
 		public Dictionary<Word, decimal> GetFrequencyDictionary()
 		{
-			if (_freqDict == null)
+			if (_freqDict == null && _nextWordDictionary.DistinctWordCount > 0)
 			{
 				_freqDict = _nextWordDictionary.GetFrequencyDictionary();
+				return _freqDict;
 			}
-			return _freqDict;
+			return new Dictionary<Word, decimal>();
 		}
+
+		public NextWordFrequencyDictionary GetNextWordDictionary()
+		{
+			return _nextWordDictionary;
+		}
+
+		#endregion
+
+		#region Suggest
 
 		public decimal GetNextWordProbability(Word nextWord)
 		{
@@ -163,6 +175,10 @@ namespace WordPredictionLibrary.Core
 
 			return this.GetFrequencyDictionary()[nextWord];
 		}
+
+		#endregion
+
+		#region Statistics
 
 		public decimal GetVariance()
 		{
@@ -183,6 +199,10 @@ namespace WordPredictionLibrary.Core
 			return (decimal)Math.Sqrt((double)GetVariance());
 		}
 
+		#endregion
+
+		#region Order
+
 		public void OrderInternalDictionary()
 		{
 			Dictionary<Word,decimal> nextDict =_nextWordDictionary._internalDictionary.OrderByFrequencyDescending().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -191,6 +211,8 @@ namespace WordPredictionLibrary.Core
 			Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListComparer());
 			_previousWordsDictionary = previousDict;
 		}
+
+		#endregion
 
 	}
 }

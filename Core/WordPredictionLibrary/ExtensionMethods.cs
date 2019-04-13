@@ -64,8 +64,8 @@ namespace WordPredictionLibrary.Core
 	{
 		public static IOrderedEnumerable<KeyValuePair<Word, decimal>> OrderByFrequencyDescending(this Dictionary<Word, decimal> source)
 		{
-			IOrderedEnumerable<KeyValuePair<Word, decimal>> result = (IOrderedEnumerable<KeyValuePair<Word, decimal>>)new List<KeyValuePair<Word, decimal>>();
-						
+			IOrderedEnumerable<KeyValuePair<Word, decimal>> result = null;
+
 			// If we haven't set FrequencyDictionary yet OR it is out of date (dict has more entries)
 			if (source.Any())
 			{

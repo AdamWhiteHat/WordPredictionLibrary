@@ -79,6 +79,8 @@ namespace WordPredictionLibrary.Core
 
 		#endregion
 
+		#region Mutate
+
 		internal static StringBuilder ReplaceWhile(string input, string oldValue, string newValue)
 		{
 			StringBuilder result = new StringBuilder(input);
@@ -243,6 +245,17 @@ namespace WordPredictionLibrary.Core
 			return result;
 		}
 
+		#endregion
+
+		#region Find
+
+		public Word Find(string word)
+		{
+			return _wordDictionary.Find(word);
+		}
+
+		#endregion
+		
 		#region ToString
 
 		public override string ToString()

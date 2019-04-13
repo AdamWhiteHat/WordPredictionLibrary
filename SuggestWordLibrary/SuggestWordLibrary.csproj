@@ -33,17 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GraphSharp">
-      <HintPath>..\GraphSharp.dll</HintPath>
+    <Reference Include="Microsoft.Msagl">
+      <HintPath>..\Microsoft.Msagl.dll</HintPath>
     </Reference>
-    <Reference Include="GraphSharp.Controls">
-      <HintPath>..\GraphSharp.Controls.dll</HintPath>
+    <Reference Include="Microsoft.Msagl.Drawing">
+      <HintPath>..\Microsoft.Msagl.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph">
-      <HintPath>..\QuickGraph.dll</HintPath>
-    </Reference>
-    <Reference Include="RibbonControlsLibrary">
-      <HintPath>..\RibbonControlsLibrary.dll</HintPath>
+    <Reference Include="Microsoft.Msagl.GraphViewerGdi">
+      <HintPath>..\Microsoft.Msagl.GraphViewerGdi.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -55,9 +52,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WPFExtensions">
-      <HintPath>..\WPFExtensions.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GraphVisualizer.cs">

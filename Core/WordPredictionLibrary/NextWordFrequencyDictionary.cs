@@ -135,10 +135,19 @@ namespace WordPredictionLibrary.Core
 			return GetNextWordByFrequencyDescending(previousWord).Take(count);
 		}
 
+		private IOrderedEnumerable<KeyValuePair<Word, decimal>> _orderedDictionary = null;		
+
 		public IEnumerable<string> GetNextWordByFrequencyDescending()
 		{
 			_orderedDictionary = _internalDictionary.OrderByFrequencyDescending();
-			return _orderedDictionary.Select(kvp => kvp.Key.Value);
+			if (_orderedDictionary != null)
+			{
+				return _orderedDictionary.Select(kvp => kvp.Key.Value);
+			}
+			else
+			{
+				return new List<string>();
+			}
 		}
 
 		public IEnumerable<string> GetNextWordByFrequencyDescending(string previousWord)
@@ -147,17 +156,15 @@ namespace WordPredictionLibrary.Core
 			return _orderedDictionary.Select(kvp => kvp.Key.Value);
 		}
 
+		#endregion
+
+		#region Get Dictionary
 
 		public Dictionary<Word, decimal> FilterDictionaryByPreviousWord(string previousWord)
 		{
 			Dictionary<Word, decimal> result = _internalDictionary.Where(w => w.Key.Value == previousWord).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 			return result;
 		}
-
-		private IOrderedEnumerable<KeyValuePair<Word, decimal>> _orderedDictionary = null;
-
-		#endregion
-
 
 		/// <summary>
 		/// The frequency is a value between 0 and 1 that is a proportional fraction of 
@@ -172,5 +179,8 @@ namespace WordPredictionLibrary.Core
 
 			return orderedFreqKvp.ToDictionary(k => k.Key, v => v.Value);
 		}
+		
+		#endregion
+
 	}
 }

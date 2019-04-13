@@ -5,6 +5,10 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using WordPredictionLibrary.Core;
 using WordPredictionLibrary.Forensics;
+using Microsoft.Msagl;
+using Microsoft.Msagl.Core;
+using Microsoft.Msagl.Layout;
+using Microsoft.Msagl.Drawing;
 
 namespace SuggestWordLibrary
 {
@@ -254,7 +258,7 @@ namespace SuggestWordLibrary
 				tbOutput.AppendText(string.Join($"{Environment.NewLine}\t", word.SuggestNextWords(-1)));
 
 			}
-			
+
 		}
 
 		private void btnDumpAll_Click(object sender, EventArgs e)
@@ -263,6 +267,54 @@ namespace SuggestWordLibrary
 			if (!string.IsNullOrWhiteSpace(selectedFile))
 			{
 				File.WriteAllText(selectedFile, dataSet.GetEntireDictionaryString());
+			}
+		}
+
+		private void btnViewGraph_Click(object sender, EventArgs e)
+		{
+			int breadth = int.Parse(tbBreath.Text);
+			int depth = int.Parse(tbDepth.Text);
+
+			Graph graph = BuildGraphFromDataset(dataSet, breadth, depth);
+
+			GraphVisualizer visualizerForm = new GraphVisualizer(graph);
+			visualizerForm.Show(this);
+		}
+
+		private Graph BuildGraphFromDataset(TrainedDataSet dataset, int breadth = -1, int depth = -1)
+		{
+			Graph graph = new Graph("WordsGraph");
+
+			BuildGraphRecursive(ref graph, dataset.Find(WordDictionary.StartPlaceholder), breadth, depth);
+
+			return graph;
+		}
+
+		private void BuildGraphRecursive(ref Graph graph, Word word, int breadth, int depth)
+		{
+			if (depth == 0)
+			{
+				return;
+			}
+
+			string fromNode = word.Value;
+
+			IEnumerable<Word> nextWords = word.GetFrequencyDictionary().Select(kvp => kvp.Key);
+
+			if (!nextWords.Any())
+			{
+				return;
+			}
+
+			if (breadth != -1)
+			{
+				nextWords = nextWords.Take(breadth);
+			}
+
+			foreach (Word nextWord in nextWords)
+			{
+				graph.AddEdge(fromNode, nextWord.Value);
+				BuildGraphRecursive(ref graph, nextWord, breadth-1, depth-1);
 			}
 		}
 	}

@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("RootNode");
+			System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("RootNode");
 			this.btnOpen = new System.Windows.Forms.Button();
 			this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.btnNew = new System.Windows.Forms.Button();
@@ -36,15 +36,23 @@
 			this.btnTrain = new System.Windows.Forms.Button();
 			this.labelTotalWords = new System.Windows.Forms.Label();
 			this.labelUniqueWords = new System.Windows.Forms.Label();
+			this.btnVisualizeDict = new System.Windows.Forms.Button();
+			this.btnDumpAll = new System.Windows.Forms.Button();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.tbDepth = new System.Windows.Forms.TextBox();
+			this.tbBreath = new System.Windows.Forms.TextBox();
+			this.btnViewGraph = new System.Windows.Forms.Button();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.treeView1 = new System.Windows.Forms.TreeView();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.tbOutput = new System.Windows.Forms.TextBox();
 			this.btnSuggest = new System.Windows.Forms.Button();
 			this.btnForensics = new System.Windows.Forms.Button();
-			this.btnVisualizeDict = new System.Windows.Forms.Button();
-			this.btnDumpAll = new System.Windows.Forms.Button();
 			this.flowLayoutPanel.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnOpen
@@ -71,12 +79,14 @@
 			this.flowLayoutPanel.Controls.Add(this.labelUniqueWords);
 			this.flowLayoutPanel.Controls.Add(this.btnVisualizeDict);
 			this.flowLayoutPanel.Controls.Add(this.btnDumpAll);
+			this.flowLayoutPanel.Controls.Add(this.panel2);
+			this.flowLayoutPanel.Controls.Add(this.panel1);
 			this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.flowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel.Name = "flowLayoutPanel";
 			this.flowLayoutPanel.Padding = new System.Windows.Forms.Padding(1);
-			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 283);
+			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 329);
 			this.flowLayoutPanel.TabIndex = 0;
 			// 
 			// btnNew
@@ -138,6 +148,93 @@
 			this.labelUniqueWords.Text = "{0} Unique Words";
 			this.labelUniqueWords.Visible = false;
 			// 
+			// btnVisualizeDict
+			// 
+			this.btnVisualizeDict.Location = new System.Drawing.Point(4, 158);
+			this.btnVisualizeDict.Name = "btnVisualizeDict";
+			this.btnVisualizeDict.Size = new System.Drawing.Size(121, 23);
+			this.btnVisualizeDict.TabIndex = 6;
+			this.btnVisualizeDict.Text = "Visualize dictionary...";
+			this.btnVisualizeDict.UseVisualStyleBackColor = true;
+			this.btnVisualizeDict.Click += new System.EventHandler(this.btnVisualizeDict_Click);
+			// 
+			// btnDumpAll
+			// 
+			this.btnDumpAll.Location = new System.Drawing.Point(4, 187);
+			this.btnDumpAll.Name = "btnDumpAll";
+			this.btnDumpAll.Size = new System.Drawing.Size(121, 38);
+			this.btnDumpAll.TabIndex = 7;
+			this.btnDumpAll.Text = "Dump All Words and Following Words";
+			this.btnDumpAll.UseVisualStyleBackColor = true;
+			this.btnDumpAll.Click += new System.EventHandler(this.btnDumpAll_Click);
+			// 
+			// panel2
+			// 
+			this.panel2.AutoSize = true;
+			this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.panel2.Location = new System.Drawing.Point(4, 231);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(0, 0);
+			this.panel2.TabIndex = 7;
+			// 
+			// panel1
+			// 
+			this.panel1.AutoSize = true;
+			this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.panel1.Controls.Add(this.label2);
+			this.panel1.Controls.Add(this.label1);
+			this.panel1.Controls.Add(this.tbDepth);
+			this.panel1.Controls.Add(this.tbBreath);
+			this.panel1.Controls.Add(this.btnViewGraph);
+			this.panel1.Location = new System.Drawing.Point(4, 237);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(125, 70);
+			this.panel1.TabIndex = 6;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(18, 50);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(39, 13);
+			this.label2.TabIndex = 12;
+			this.label2.Text = "Depth:";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(10, 29);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(47, 13);
+			this.label1.TabIndex = 10;
+			this.label1.Text = "Breadth:";
+			// 
+			// tbDepth
+			// 
+			this.tbDepth.Location = new System.Drawing.Point(60, 47);
+			this.tbDepth.Name = "tbDepth";
+			this.tbDepth.Size = new System.Drawing.Size(61, 20);
+			this.tbDepth.TabIndex = 11;
+			this.tbDepth.Text = "5";
+			// 
+			// tbBreath
+			// 
+			this.tbBreath.Location = new System.Drawing.Point(60, 26);
+			this.tbBreath.Name = "tbBreath";
+			this.tbBreath.Size = new System.Drawing.Size(61, 20);
+			this.tbBreath.TabIndex = 9;
+			this.tbBreath.Text = "5";
+			// 
+			// btnViewGraph
+			// 
+			this.btnViewGraph.Location = new System.Drawing.Point(1, 3);
+			this.btnViewGraph.Name = "btnViewGraph";
+			this.btnViewGraph.Size = new System.Drawing.Size(121, 23);
+			this.btnViewGraph.TabIndex = 8;
+			this.btnViewGraph.Text = "View Graph...";
+			this.btnViewGraph.UseVisualStyleBackColor = true;
+			this.btnViewGraph.Click += new System.EventHandler(this.btnViewGraph_Click);
+			// 
 			// openFileDialog
 			// 
 			this.openFileDialog.AddExtension = false;
@@ -149,11 +246,11 @@
 			this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.treeView1.Location = new System.Drawing.Point(422, 7);
 			this.treeView1.Name = "treeView1";
-			treeNode1.Name = "RootNode";
-			treeNode1.Text = "RootNode";
+			treeNode2.Name = "RootNode";
+			treeNode2.Text = "RootNode";
 			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-			this.treeView1.Size = new System.Drawing.Size(145, 271);
+            treeNode2});
+			this.treeView1.Size = new System.Drawing.Size(145, 208);
 			this.treeView1.TabIndex = 4;
 			// 
 			// tbOutput
@@ -165,7 +262,7 @@
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbOutput.Size = new System.Drawing.Size(271, 249);
+			this.tbOutput.Size = new System.Drawing.Size(271, 295);
 			this.tbOutput.TabIndex = 2;
 			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
 			// 
@@ -189,31 +286,11 @@
 			this.btnForensics.UseVisualStyleBackColor = true;
 			this.btnForensics.Click += new System.EventHandler(this.btnForensics_Click);
 			// 
-			// btnVisualizeDict
-			// 
-			this.btnVisualizeDict.Location = new System.Drawing.Point(4, 158);
-			this.btnVisualizeDict.Name = "btnVisualizeDict";
-			this.btnVisualizeDict.Size = new System.Drawing.Size(121, 23);
-			this.btnVisualizeDict.TabIndex = 6;
-			this.btnVisualizeDict.Text = "Visualize dictionary...";
-			this.btnVisualizeDict.UseVisualStyleBackColor = true;
-			this.btnVisualizeDict.Click += new System.EventHandler(this.btnVisualizeDict_Click);
-			// 
-			// btnDumpAll
-			// 
-			this.btnDumpAll.Location = new System.Drawing.Point(4, 187);
-			this.btnDumpAll.Name = "btnDumpAll";
-			this.btnDumpAll.Size = new System.Drawing.Size(121, 38);
-			this.btnDumpAll.TabIndex = 7;
-			this.btnDumpAll.Text = "Dump All Words and Following Words";
-			this.btnDumpAll.UseVisualStyleBackColor = true;
-			this.btnDumpAll.Click += new System.EventHandler(this.btnDumpAll_Click);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(571, 283);
+			this.ClientSize = new System.Drawing.Size(571, 329);
 			this.Controls.Add(this.btnForensics);
 			this.Controls.Add(this.treeView1);
 			this.Controls.Add(this.btnSuggest);
@@ -223,6 +300,8 @@
 			this.Text = "Word Prediction & Forensics Library";
 			this.flowLayoutPanel.ResumeLayout(false);
 			this.flowLayoutPanel.PerformLayout();
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -245,6 +324,13 @@
 		private System.Windows.Forms.Button btnForensics;
 		private System.Windows.Forms.Button btnVisualizeDict;
 		private System.Windows.Forms.Button btnDumpAll;
+		private System.Windows.Forms.Button btnViewGraph;
+		private System.Windows.Forms.TextBox tbBreath;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TextBox tbDepth;
 	}
 }
 

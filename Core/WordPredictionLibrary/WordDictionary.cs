@@ -15,8 +15,8 @@ namespace WordPredictionLibrary.Core
 		internal List<Word> Words { get { return _internalDictionary.Values.ToList(); } }
 		internal Dictionary<string, Word> _internalDictionary = null;
 		internal bool isOrdered = false;
-		internal static string StartPlaceholder = "{{start}}";
-		internal static string EndPlaceholder = "{{end}}";
+		public static string StartPlaceholder = "{{start}}";
+		public static string EndPlaceholder = "{{end}}";
 		public static decimal noMatchValue = 0;
 
 		internal void OrderInternalDictionary()
@@ -53,11 +53,6 @@ namespace WordPredictionLibrary.Core
 			: this()
 		{
 			_internalDictionary = dictionary;
-		}
-
-		public Dictionary<string, Word> GetInternalDictionary()
-		{
-			return _internalDictionary;
 		}
 
 		public override string ToString()
@@ -281,11 +276,34 @@ namespace WordPredictionLibrary.Core
 
 		#endregion
 
+		#region Find
+
+		public bool Contains(string word)
+		{
+			return Words.Any(wrd => string.Compare(wrd.Value,word,true) == 0);
+		}
+
+		public Word Find(string word)
+		{
+			return Words.Where(wrd => string.Compare(wrd.Value, word, true) == 0).Single();
+		}
+
+		#endregion
+
+		#region Get Dictionary
+
 		public Dictionary<Word, decimal> GetFrequencyDictionary()
 		{
 			decimal baseProbability = 1 / TotalSampleSize;
 			return GetDistinctSortedWordsList().ToDictionary(k => k, v => baseProbability * v.AbsoluteFrequency);
 		}
+
+		public Dictionary<string, Word> GetInternalDictionary()
+		{
+			return _internalDictionary;
+		}
+
+		#endregion
 
 	}
 }
