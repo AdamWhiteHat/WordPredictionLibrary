@@ -58,3 +58,4 @@ Core/WordForensicsLibrary/bin/*
 *.vhost.*
 *.FileListAbsolute.txt
 *.scgdat
+/.vs/*
