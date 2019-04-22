@@ -87,7 +87,7 @@
 			this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel.Name = "flowLayoutPanel";
 			this.flowLayoutPanel.Padding = new System.Windows.Forms.Padding(1);
-			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 329);
+			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 348);
 			this.flowLayoutPanel.TabIndex = 0;
 			// 
 			// btnNew
@@ -251,7 +251,7 @@
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbOutput.Size = new System.Drawing.Size(271, 295);
+			this.tbOutput.Size = new System.Drawing.Size(271, 314);
 			this.tbOutput.TabIndex = 2;
 			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
 			// 
@@ -308,7 +308,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(571, 329);
+			this.ClientSize = new System.Drawing.Size(571, 348);
 			this.Controls.Add(this.listWords);
 			this.Controls.Add(this.btnPopulateList);
 			this.Controls.Add(this.btnForensics);

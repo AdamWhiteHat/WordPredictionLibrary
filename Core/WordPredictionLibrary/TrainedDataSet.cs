@@ -100,7 +100,7 @@ namespace WordPredictionLibrary.Core
 			return result;
 		}
 
-		internal static List<List<string>> TokenizeTextFile(string filename)
+		public static List<List<string>> TokenizeTextFile(string filename)
 		{
 			if (!File.Exists(filename)) { throw new FileNotFoundException("Cannot parse file that does not exist", filename); }
 
@@ -383,7 +383,7 @@ namespace WordPredictionLibrary.Core
 					new XElement(XmlElementNames.TotalWordsProcessedNode, dataset._wordDictionary.TotalSampleSize),
 					dataset._wordDictionary.Words.Select(word =>
 						new XElement(XmlElementNames.WordNode,
-							//  <Word>	
+						//  <Word>
 							// <Value>
 							new XElement(XmlElementNames.ValueNode, word.Value),
 
@@ -407,7 +407,7 @@ namespace WordPredictionLibrary.Core
 									)
 								)
 							)
-
+													
 						// </Word>
 						)
 					)

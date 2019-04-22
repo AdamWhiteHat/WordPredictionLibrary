@@ -18,7 +18,11 @@ namespace SuggestWordLibrary
 		public GraphVisualizer(Graph graph)
 		{
 			InitializeComponent();
+			gViewer.SuspendLayout();
 			gViewer.Graph = graph;
+			gViewer.ViewerGraph.DrawingGraph.LayoutAlgorithmSettings.EdgeRoutingSettings.EdgeRoutingMode = Microsoft.Msagl.Core.Routing.EdgeRoutingMode.SplineBundling;
+			gViewer.ResumeLayout();
+						
 		}
 	}
 }
