@@ -256,9 +256,7 @@ namespace SuggestWordLibrary
 
 				tbOutput.AppendText($"{Environment.NewLine}\t");
 				tbOutput.AppendText(string.Join($"{Environment.NewLine}\t", word.SuggestNextWords(-1)));
-
 			}
-
 		}
 
 		private void btnDumpAll_Click(object sender, EventArgs e)
@@ -267,6 +265,30 @@ namespace SuggestWordLibrary
 			if (!string.IsNullOrWhiteSpace(selectedFile))
 			{
 				File.WriteAllText(selectedFile, dataSet.GetEntireDictionaryString());
+			}
+		}
+
+		#region Graph View Visualizer Methods
+
+		private List<string> ExclusionWordList = new List<string>();
+
+		private void btnLoadWordExlusionList_Click(object sender, EventArgs e)
+		{
+			string selectedFile = ShowFileDialog(openFileDialog);
+			if (!string.IsNullOrWhiteSpace(selectedFile) && File.Exists(selectedFile))
+			{
+				IEnumerable<string> exclusionWords = File.ReadAllLines(selectedFile);
+				exclusionWords = exclusionWords.Select(str => str.Trim());				
+				exclusionWords = exclusionWords.Where(str => !string.IsNullOrWhiteSpace(str));
+				exclusionWords = exclusionWords.Select(str => str.ToLowerInvariant());
+				exclusionWords = exclusionWords.Except(new string[] { "{{start}}", "{{end}}" });
+				exclusionWords = exclusionWords.Distinct();
+
+				if (exclusionWords.Any())
+				{
+					ExclusionWordList.AddRange(exclusionWords);
+					ExclusionWordList = ExclusionWordList.Distinct().ToList();
+				}
 			}
 		}
 
@@ -300,6 +322,7 @@ namespace SuggestWordLibrary
 			string fromNode = word.Value;
 
 			IEnumerable<Word> nextWords = word.GetFrequencyDictionary().Select(kvp => kvp.Key);
+			nextWords = nextWords.Where(wrd => !ExclusionWordList.Contains(wrd.Value));
 
 			if (!nextWords.Any())
 			{
@@ -321,19 +344,23 @@ namespace SuggestWordLibrary
 		private void btnPopulateList_Click(object sender, EventArgs e)
 		{
 			List<Word> words = dataSet.GetDistinctSortedWords();
+			words = words.Where(wrd => !ExclusionWordList.Contains(wrd.Value)).ToList();
 
-			foreach (Word word in words)
+			if (words.Any())
 			{
-				listWords.Items.Add(word.Value);
+				listWords.Items.Clear();
+				foreach (Word word in words)
+				{
+					listWords.Items.Add(word.Value);
+				}
 			}
-
 		}
 
 		private void btnViewSelectedWordGraph_Click(object sender, EventArgs e)
 		{
 			if (listWords.SelectedIndex == -1)
 			{
-				MessageBox.Show("Select a word from the ListBox above first.");
+				ShowInfo("Select a word from the ListBox above first.");
 				return;
 			}
 
@@ -341,6 +368,7 @@ namespace SuggestWordLibrary
 
 			List<string> selectedItems = listWords.SelectedItems.OfType<object>().Select(obj => obj.ToString()).ToList();
 			List<Word> selectedWords = selectedItems.Select(itm => dataSet.Find(itm)).ToList();
+			selectedWords = selectedWords.Where(wrd => !ExclusionWordList.Contains(wrd.Value)).ToList();
 
 			List<Word> copy = selectedWords.ToList();
 
@@ -352,7 +380,7 @@ namespace SuggestWordLibrary
 			// First add all the selected words to the graph as nodes.
 			// It is necessary to make sure all the nodes exist first, so that graph.FindNode() below works and doesn't throw an exception.
 			foreach (Word currentWord in selectedWords)
-			{				
+			{
 				graph.AddNode(currentWord.Value); // Add node, just in case there are no connections (edges) to add, the word node will still show up.
 			}
 
@@ -412,5 +440,8 @@ namespace SuggestWordLibrary
 			GraphVisualizer visualizerForm = new GraphVisualizer(graph);
 			visualizerForm.Show(this);
 		}
+
+		#endregion
+
 	}
 }

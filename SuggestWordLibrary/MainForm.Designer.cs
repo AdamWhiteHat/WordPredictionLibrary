@@ -44,6 +44,7 @@
 			this.tbDepth = new System.Windows.Forms.TextBox();
 			this.tbBreath = new System.Windows.Forms.TextBox();
 			this.btnViewGraph = new System.Windows.Forms.Button();
+			this.btnLoadWordExlusionList = new System.Windows.Forms.Button();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.tbOutput = new System.Windows.Forms.TextBox();
@@ -86,12 +87,13 @@
 			this.flowLayoutPanel.Controls.Add(this.btnDumpAll);
 			this.flowLayoutPanel.Controls.Add(this.panel2);
 			this.flowLayoutPanel.Controls.Add(this.panel1);
+			this.flowLayoutPanel.Controls.Add(this.btnLoadWordExlusionList);
 			this.flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.flowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel.Name = "flowLayoutPanel";
 			this.flowLayoutPanel.Padding = new System.Windows.Forms.Padding(1);
-			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 351);
+			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 364);
 			this.flowLayoutPanel.TabIndex = 0;
 			// 
 			// btnNew
@@ -193,13 +195,13 @@
 			this.panel1.Controls.Add(this.btnViewGraph);
 			this.panel1.Location = new System.Drawing.Point(4, 237);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(125, 70);
+			this.panel1.Size = new System.Drawing.Size(124, 70);
 			this.panel1.TabIndex = 6;
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(18, 50);
+			this.label2.Location = new System.Drawing.Point(15, 50);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(39, 13);
 			this.label2.TabIndex = 12;
@@ -208,7 +210,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(10, 29);
+			this.label1.Location = new System.Drawing.Point(7, 29);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(47, 13);
 			this.label1.TabIndex = 10;
@@ -216,7 +218,7 @@
 			// 
 			// tbDepth
 			// 
-			this.tbDepth.Location = new System.Drawing.Point(60, 47);
+			this.tbDepth.Location = new System.Drawing.Point(57, 47);
 			this.tbDepth.Name = "tbDepth";
 			this.tbDepth.Size = new System.Drawing.Size(61, 20);
 			this.tbDepth.TabIndex = 11;
@@ -224,7 +226,7 @@
 			// 
 			// tbBreath
 			// 
-			this.tbBreath.Location = new System.Drawing.Point(60, 26);
+			this.tbBreath.Location = new System.Drawing.Point(57, 26);
 			this.tbBreath.Name = "tbBreath";
 			this.tbBreath.Size = new System.Drawing.Size(61, 20);
 			this.tbBreath.TabIndex = 9;
@@ -232,13 +234,23 @@
 			// 
 			// btnViewGraph
 			// 
-			this.btnViewGraph.Location = new System.Drawing.Point(1, 3);
+			this.btnViewGraph.Location = new System.Drawing.Point(0, 0);
 			this.btnViewGraph.Name = "btnViewGraph";
 			this.btnViewGraph.Size = new System.Drawing.Size(121, 23);
 			this.btnViewGraph.TabIndex = 8;
 			this.btnViewGraph.Text = "View Graph...";
 			this.btnViewGraph.UseVisualStyleBackColor = true;
 			this.btnViewGraph.Click += new System.EventHandler(this.btnViewGraph_Click);
+			// 
+			// btnLoadWordExlusionList
+			// 
+			this.btnLoadWordExlusionList.Location = new System.Drawing.Point(4, 313);
+			this.btnLoadWordExlusionList.Name = "btnLoadWordExlusionList";
+			this.btnLoadWordExlusionList.Size = new System.Drawing.Size(121, 36);
+			this.btnLoadWordExlusionList.TabIndex = 8;
+			this.btnLoadWordExlusionList.Text = "Load Graph Word Exclusion List...";
+			this.btnLoadWordExlusionList.UseVisualStyleBackColor = true;
+			this.btnLoadWordExlusionList.Click += new System.EventHandler(this.btnLoadWordExlusionList_Click);
 			// 
 			// openFileDialog
 			// 
@@ -255,7 +267,7 @@
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbOutput.Size = new System.Drawing.Size(458, 317);
+			this.tbOutput.Size = new System.Drawing.Size(259, 330);
 			this.tbOutput.TabIndex = 2;
 			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
 			// 
@@ -282,7 +294,7 @@
 			// btnViewSelectedWordGraph
 			// 
 			this.btnViewSelectedWordGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.btnViewSelectedWordGraph.Location = new System.Drawing.Point(2, 247);
+			this.btnViewSelectedWordGraph.Location = new System.Drawing.Point(2, 260);
 			this.btnViewSelectedWordGraph.Name = "btnViewSelectedWordGraph";
 			this.btnViewSelectedWordGraph.Size = new System.Drawing.Size(167, 23);
 			this.btnViewSelectedWordGraph.TabIndex = 8;
@@ -309,7 +321,7 @@
 			this.listWords.Name = "listWords";
 			this.listWords.ScrollAlwaysVisible = true;
 			this.listWords.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listWords.Size = new System.Drawing.Size(166, 212);
+			this.listWords.Size = new System.Drawing.Size(166, 225);
 			this.listWords.TabIndex = 10;
 			// 
 			// panel3
@@ -321,9 +333,9 @@
 			this.panel3.Controls.Add(this.btnPopulateList);
 			this.panel3.Controls.Add(this.listWords);
 			this.panel3.Controls.Add(this.btnViewSelectedWordGraph);
-			this.panel3.Location = new System.Drawing.Point(609, 29);
+			this.panel3.Location = new System.Drawing.Point(410, 27);
 			this.panel3.Name = "panel3";
-			this.panel3.Size = new System.Drawing.Size(173, 317);
+			this.panel3.Size = new System.Drawing.Size(173, 330);
 			this.panel3.TabIndex = 11;
 			// 
 			// cbShowSubsequentWords
@@ -332,7 +344,7 @@
 			this.cbShowSubsequentWords.AutoSize = true;
 			this.cbShowSubsequentWords.Checked = true;
 			this.cbShowSubsequentWords.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbShowSubsequentWords.Location = new System.Drawing.Point(9, 291);
+			this.cbShowSubsequentWords.Location = new System.Drawing.Point(9, 304);
 			this.cbShowSubsequentWords.Name = "cbShowSubsequentWords";
 			this.cbShowSubsequentWords.Size = new System.Drawing.Size(142, 17);
 			this.cbShowSubsequentWords.TabIndex = 12;
@@ -345,7 +357,7 @@
 			this.cbShowPriorWords.AutoSize = true;
 			this.cbShowPriorWords.Checked = true;
 			this.cbShowPriorWords.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbShowPriorWords.Location = new System.Drawing.Point(9, 274);
+			this.cbShowPriorWords.Location = new System.Drawing.Point(9, 287);
 			this.cbShowPriorWords.Name = "cbShowPriorWords";
 			this.cbShowPriorWords.Size = new System.Drawing.Size(107, 17);
 			this.cbShowPriorWords.TabIndex = 11;
@@ -356,13 +368,13 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(783, 351);
+			this.ClientSize = new System.Drawing.Size(584, 364);
 			this.Controls.Add(this.panel3);
 			this.Controls.Add(this.btnForensics);
 			this.Controls.Add(this.btnSuggest);
 			this.Controls.Add(this.tbOutput);
 			this.Controls.Add(this.flowLayoutPanel);
-			this.MinimumSize = new System.Drawing.Size(16, 350);
+			this.MinimumSize = new System.Drawing.Size(335, 402);
 			this.Name = "MainForm";
 			this.Text = "Word Prediction & Forensics Library";
 			this.flowLayoutPanel.ResumeLayout(false);
@@ -405,6 +417,7 @@
 		private System.Windows.Forms.Panel panel3;
 		private System.Windows.Forms.CheckBox cbShowSubsequentWords;
 		private System.Windows.Forms.CheckBox cbShowPriorWords;
+		private System.Windows.Forms.Button btnLoadWordExlusionList;
 	}
 }
 
