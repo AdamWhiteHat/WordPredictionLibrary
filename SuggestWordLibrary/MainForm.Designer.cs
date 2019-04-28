@@ -52,8 +52,12 @@
 			this.btnViewSelectedWordGraph = new System.Windows.Forms.Button();
 			this.btnPopulateList = new System.Windows.Forms.Button();
 			this.listWords = new System.Windows.Forms.ListBox();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.cbShowSubsequentWords = new System.Windows.Forms.CheckBox();
+			this.cbShowPriorWords = new System.Windows.Forms.CheckBox();
 			this.flowLayoutPanel.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this.panel3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnOpen
@@ -87,7 +91,7 @@
 			this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel.Name = "flowLayoutPanel";
 			this.flowLayoutPanel.Padding = new System.Windows.Forms.Padding(1);
-			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 348);
+			this.flowLayoutPanel.Size = new System.Drawing.Size(142, 351);
 			this.flowLayoutPanel.TabIndex = 0;
 			// 
 			// btnNew
@@ -251,7 +255,7 @@
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbOutput.Size = new System.Drawing.Size(271, 314);
+			this.tbOutput.Size = new System.Drawing.Size(458, 317);
 			this.tbOutput.TabIndex = 2;
 			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
 			// 
@@ -277,51 +281,96 @@
 			// 
 			// btnViewSelectedWordGraph
 			// 
-			this.btnViewSelectedWordGraph.Location = new System.Drawing.Point(423, 276);
+			this.btnViewSelectedWordGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.btnViewSelectedWordGraph.Location = new System.Drawing.Point(2, 247);
 			this.btnViewSelectedWordGraph.Name = "btnViewSelectedWordGraph";
-			this.btnViewSelectedWordGraph.Size = new System.Drawing.Size(145, 23);
+			this.btnViewSelectedWordGraph.Size = new System.Drawing.Size(167, 23);
 			this.btnViewSelectedWordGraph.TabIndex = 8;
-			this.btnViewSelectedWordGraph.Text = "View selected word↑ graph";
+			this.btnViewSelectedWordGraph.Text = "View selected word(s)↑ graph";
 			this.btnViewSelectedWordGraph.UseVisualStyleBackColor = true;
 			this.btnViewSelectedWordGraph.Click += new System.EventHandler(this.btnViewSelectedWordGraph_Click);
 			// 
 			// btnPopulateList
 			// 
-			this.btnPopulateList.Location = new System.Drawing.Point(424, 29);
+			this.btnPopulateList.Location = new System.Drawing.Point(3, 3);
 			this.btnPopulateList.Name = "btnPopulateList";
-			this.btnPopulateList.Size = new System.Drawing.Size(143, 23);
+			this.btnPopulateList.Size = new System.Drawing.Size(166, 23);
 			this.btnPopulateList.TabIndex = 9;
-			this.btnPopulateList.Text = "Populate List ↓";
+			this.btnPopulateList.Text = "Populate Words List ↓";
 			this.btnPopulateList.UseVisualStyleBackColor = true;
 			this.btnPopulateList.Click += new System.EventHandler(this.btnPopulateList_Click);
 			// 
 			// listWords
 			// 
+			this.listWords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.listWords.FormattingEnabled = true;
-			this.listWords.Location = new System.Drawing.Point(424, 58);
+			this.listWords.Location = new System.Drawing.Point(3, 29);
 			this.listWords.Name = "listWords";
 			this.listWords.ScrollAlwaysVisible = true;
-			this.listWords.Size = new System.Drawing.Size(143, 212);
+			this.listWords.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+			this.listWords.Size = new System.Drawing.Size(166, 212);
 			this.listWords.TabIndex = 10;
+			// 
+			// panel3
+			// 
+			this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel3.Controls.Add(this.cbShowSubsequentWords);
+			this.panel3.Controls.Add(this.cbShowPriorWords);
+			this.panel3.Controls.Add(this.btnPopulateList);
+			this.panel3.Controls.Add(this.listWords);
+			this.panel3.Controls.Add(this.btnViewSelectedWordGraph);
+			this.panel3.Location = new System.Drawing.Point(609, 29);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(173, 317);
+			this.panel3.TabIndex = 11;
+			// 
+			// cbShowSubsequentWords
+			// 
+			this.cbShowSubsequentWords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.cbShowSubsequentWords.AutoSize = true;
+			this.cbShowSubsequentWords.Checked = true;
+			this.cbShowSubsequentWords.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cbShowSubsequentWords.Location = new System.Drawing.Point(9, 291);
+			this.cbShowSubsequentWords.Name = "cbShowSubsequentWords";
+			this.cbShowSubsequentWords.Size = new System.Drawing.Size(142, 17);
+			this.cbShowSubsequentWords.TabIndex = 12;
+			this.cbShowSubsequentWords.Text = "Show subsequent words";
+			this.cbShowSubsequentWords.UseVisualStyleBackColor = true;
+			// 
+			// cbShowPriorWords
+			// 
+			this.cbShowPriorWords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.cbShowPriorWords.AutoSize = true;
+			this.cbShowPriorWords.Checked = true;
+			this.cbShowPriorWords.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cbShowPriorWords.Location = new System.Drawing.Point(9, 274);
+			this.cbShowPriorWords.Name = "cbShowPriorWords";
+			this.cbShowPriorWords.Size = new System.Drawing.Size(107, 17);
+			this.cbShowPriorWords.TabIndex = 11;
+			this.cbShowPriorWords.Text = "Show prior words";
+			this.cbShowPriorWords.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(571, 348);
-			this.Controls.Add(this.listWords);
-			this.Controls.Add(this.btnPopulateList);
+			this.ClientSize = new System.Drawing.Size(783, 351);
+			this.Controls.Add(this.panel3);
 			this.Controls.Add(this.btnForensics);
-			this.Controls.Add(this.btnViewSelectedWordGraph);
 			this.Controls.Add(this.btnSuggest);
 			this.Controls.Add(this.tbOutput);
 			this.Controls.Add(this.flowLayoutPanel);
+			this.MinimumSize = new System.Drawing.Size(16, 350);
 			this.Name = "MainForm";
 			this.Text = "Word Prediction & Forensics Library";
 			this.flowLayoutPanel.ResumeLayout(false);
 			this.flowLayoutPanel.PerformLayout();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
+			this.panel3.ResumeLayout(false);
+			this.panel3.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -353,6 +402,9 @@
 		private System.Windows.Forms.Button btnViewSelectedWordGraph;
 		private System.Windows.Forms.Button btnPopulateList;
 		private System.Windows.Forms.ListBox listWords;
+		private System.Windows.Forms.Panel panel3;
+		private System.Windows.Forms.CheckBox cbShowSubsequentWords;
+		private System.Windows.Forms.CheckBox cbShowPriorWords;
 	}
 }
 

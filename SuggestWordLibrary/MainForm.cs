@@ -314,7 +314,7 @@ namespace SuggestWordLibrary
 			foreach (Word nextWord in nextWords)
 			{
 				graph.AddEdge(fromNode, nextWord.Value);
-				BuildGraphRecursive(ref graph, nextWord, breadth-1, depth-1);
+				BuildGraphRecursive(ref graph, nextWord, breadth - 1, depth - 1);
 			}
 		}
 
@@ -326,7 +326,7 @@ namespace SuggestWordLibrary
 			{
 				listWords.Items.Add(word.Value);
 			}
-			
+
 		}
 
 		private void btnViewSelectedWordGraph_Click(object sender, EventArgs e)
@@ -339,23 +339,74 @@ namespace SuggestWordLibrary
 
 			dataSet.OrderInternalDictionary();
 
-			string selectedItem = listWords.SelectedItem.ToString();
-			Word selectedWord = dataSet.Find(selectedItem);
+			List<string> selectedItems = listWords.SelectedItems.OfType<object>().Select(obj => obj.ToString()).ToList();
+			List<Word> selectedWords = selectedItems.Select(itm => dataSet.Find(itm)).ToList();
 
-			string centerNodeWord = selectedWord.Value;
-			
-			List<string> nextWords = selectedWord.GetNextWordDictionary().GetNextWordByFrequencyDescending().ToList();
-			List<string> previousWords = dataSet.GetDistinctSortedWords().Where(wrd => wrd.GetNextWordDictionary().Contains(centerNodeWord)).Select(wrd => wrd.Value).ToList();
+			List<Word> copy = selectedWords.ToList();
+
+			bool includePreviousWords = cbShowPriorWords.Checked;
+			bool includeNextWords = cbShowSubsequentWords.Checked;
 
 			Graph graph = new Graph("WordsGraph");
-			foreach (string nextWord in nextWords)
-			{
-				graph.AddEdge(centerNodeWord, nextWord);
+
+			// First add all the selected words to the graph as nodes.
+			// It is necessary to make sure all the nodes exist first, so that graph.FindNode() below works and doesn't throw an exception.
+			foreach (Word currentWord in selectedWords)
+			{				
+				graph.AddNode(currentWord.Value); // Add node, just in case there are no connections (edges) to add, the word node will still show up.
 			}
 
-			foreach (string previousWord in previousWords)
+			foreach (Word currentWord in selectedWords)
 			{
-				graph.AddEdge(previousWord, centerNodeWord);
+				string centerNodeWord = currentWord.Value;
+
+				// Construct list of previous words to include in the graph for the current word
+				List<string> previousWords = new List<string>();
+				if (includePreviousWords)
+				{
+					previousWords = dataSet.GetDistinctSortedWords().Where(wrd => wrd.GetNextWordDictionary().Contains(centerNodeWord)).Select(wrd => wrd.Value).ToList();
+				}
+				else
+				{
+					// If user elected not to include (all) previous words,
+					// we still want to include any connections amongst the subset of words selected for explicit inclusion in this graph.
+					List<Word> search = copy.Except(new Word[] { currentWord }).ToList();
+					previousWords = search.Where(wrd => wrd.GetNextWordDictionary().Contains(centerNodeWord)).Select(wrd => wrd.Value).ToList();
+				}
+
+				// Construct list of next words to include in the graph for the current word
+				List<string> nextWords = new List<string>();
+				if (includeNextWords)
+				{
+					nextWords = currentWord.GetNextWordDictionary().GetNextWordByFrequencyDescending().ToList();
+				}
+				else
+				{
+					// If user elected not to include (all) next words,
+					// we still want to include any connections amongst the subset of words selected for explicit inclusion in this graph.
+					List<string> search = copy.Except(new Word[] { currentWord }).Select(wrd => wrd.Value).ToList();
+					nextWords = currentWord.GetNextWordDictionary().GetNextWordByFrequencyDescending().Where(nxtWrd => search.Contains(nxtWrd)).ToList();
+				}
+
+				// Go ahead and add all the words gathered in the previous steps to the graph now.
+				foreach (string previousWord in previousWords)
+				{
+					Edge newEdge = new Edge(previousWord, string.Empty, centerNodeWord);
+					bool alreadyContainsEdge = graph.Edges.Contains(newEdge, new GraphEdgeComparer());
+					if (!alreadyContainsEdge) // Don't add the same edge more than once.
+					{
+						graph.AddEdge(previousWord, centerNodeWord); // Previous Word -> Current Word
+					}
+				}
+				foreach (string nextWord in nextWords)
+				{
+					Edge newEdge = new Edge(centerNodeWord, string.Empty, nextWord);
+					bool alreadyContainsEdge = graph.Edges.Contains(newEdge, new GraphEdgeComparer());
+					if (!alreadyContainsEdge) // Don't add the same edge more than once.
+					{
+						graph.AddEdge(centerNodeWord, nextWord); // Current Word -> Next Word
+					}
+				}
 			}
 
 			GraphVisualizer visualizerForm = new GraphVisualizer(graph);
