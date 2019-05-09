@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("WordForensicsLibrary")]
 [assembly: AssemblyDescription("Word Forensics Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("www.csharpprogramming.tips")]
+[assembly: AssemblyCompany("https://csharpcodewhisperer.blogspot.com")]
 [assembly: AssemblyProduct("WordForensicsLibrary")]
-[assembly: AssemblyCopyright("Copyright © Adam Rakaska 2016")]
+[assembly: AssemblyCopyright("Copyright © Adam White 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
