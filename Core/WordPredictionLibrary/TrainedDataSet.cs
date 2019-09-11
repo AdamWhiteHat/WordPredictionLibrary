@@ -57,19 +57,14 @@ namespace WordPredictionLibrary.Core
 			return _wordDictionary.GetInternalDictionary();
 		}
 
-		public List<Word> GetDistinctSortedWords()
+		public IEnumerable<Word> GetDistinctSortedWords()
 		{
 			return _wordDictionary.GetDistinctSortedWordsList();
 		}
 
-		public string GetEntireDictionaryString()
+		public IEnumerable<string> GetDistinctSortedWordStrings()
 		{
-			return string.Join(Environment.NewLine, GetDistinctSortedWords().Select(w => w.ToString()));
-		}
-
-		public string GetDistinctSortedWordString()
-		{
-			return string.Join(Environment.NewLine, GetDistinctSortedWords().Select(w => w.Value));
+			return GetDistinctSortedWords().Select(w => w?.Value ?? "(null)");
 		}
 
 		public string GetDistinctSortedWordFrequencyString()
@@ -260,7 +255,7 @@ namespace WordPredictionLibrary.Core
 		}
 
 		#endregion
-		
+
 		#region ToString
 
 		public override string ToString()
@@ -383,7 +378,7 @@ namespace WordPredictionLibrary.Core
 					new XElement(XmlElementNames.TotalWordsProcessedNode, dataset._wordDictionary.TotalSampleSize),
 					dataset._wordDictionary.Words.Select(word =>
 						new XElement(XmlElementNames.WordNode,
-						//  <Word>
+							//  <Word>
 							// <Value>
 							new XElement(XmlElementNames.ValueNode, word.Value),
 
@@ -407,7 +402,7 @@ namespace WordPredictionLibrary.Core
 									)
 								)
 							)
-													
+
 						// </Word>
 						)
 					)

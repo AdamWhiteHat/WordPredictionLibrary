@@ -212,12 +212,12 @@ namespace WordPredictionLibrary.Core
 
 		#region Sort
 
-		public List<Word> GetDistinctSortedWordsList()
+		public IEnumerable<Word> GetDistinctSortedWordsList()
 		{
 			return _internalDictionary
 						.OrderByDescending(kvp => kvp.Value.AbsoluteFrequency)
 						.Select(kvp => kvp.Value)
-						.Distinct().ToList();
+						.Distinct();
 		}
 
 		public string GetDistinctSortedWordFrequencyString()
@@ -280,7 +280,7 @@ namespace WordPredictionLibrary.Core
 
 		public bool Contains(string word)
 		{
-			return Words.Any(wrd => string.Compare(wrd.Value,word,true) == 0);
+			return Words.Any(wrd => string.Compare(wrd.Value, word, true) == 0);
 		}
 
 		public Word Find(string word)

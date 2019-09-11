@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -247,7 +248,7 @@ namespace SuggestWordLibrary
 
 			if (string.IsNullOrWhiteSpace(lastWord))
 			{
-				tbOutput.Text = dataSet.GetDistinctSortedWordString(); // dataSet.GetDistinctSortedWordFrequencyString();
+				tbOutput.Lines = dataSet.GetDistinctSortedWordStrings().Take(5000).ToArray(); // dataSet.GetDistinctSortedWordFrequencyString();
 			}
 			else
 			{
@@ -264,7 +265,24 @@ namespace SuggestWordLibrary
 			string selectedFile = ShowFileDialog(openFileDialog);
 			if (!string.IsNullOrWhiteSpace(selectedFile))
 			{
-				File.WriteAllText(selectedFile, dataSet.GetEntireDictionaryString());
+				File.WriteAllText(selectedFile, string.Empty); // Truncate the file if it already exists since we 
+
+				IEnumerable<string> lines = dataSet.GetDistinctSortedWordStrings();
+
+				StringBuilder stringBuilder = new StringBuilder((int)Math.Min(10000, dataSet.UniqueWordCount));
+				foreach (string line in lines)
+				{
+					stringBuilder.AppendLine(line);
+					if (stringBuilder.Length > 10000)
+					{
+						File.AppendAllText(selectedFile, stringBuilder.ToString());
+						stringBuilder.Clear();
+					}
+				}
+
+				File.AppendAllText(selectedFile, stringBuilder.ToString());
+				stringBuilder.Clear();
+				stringBuilder = null;
 			}
 		}
 
@@ -278,7 +296,7 @@ namespace SuggestWordLibrary
 			if (!string.IsNullOrWhiteSpace(selectedFile) && File.Exists(selectedFile))
 			{
 				IEnumerable<string> exclusionWords = File.ReadAllLines(selectedFile);
-				exclusionWords = exclusionWords.Select(str => str.Trim());				
+				exclusionWords = exclusionWords.Select(str => str.Trim());
 				exclusionWords = exclusionWords.Where(str => !string.IsNullOrWhiteSpace(str));
 				exclusionWords = exclusionWords.Select(str => str.ToLowerInvariant());
 				exclusionWords = exclusionWords.Except(new string[] { "{{start}}", "{{end}}" });
@@ -343,8 +361,7 @@ namespace SuggestWordLibrary
 
 		private void btnPopulateList_Click(object sender, EventArgs e)
 		{
-			List<Word> words = dataSet.GetDistinctSortedWords();
-			words = words.Where(wrd => !ExclusionWordList.Contains(wrd.Value)).ToList();
+			IEnumerable<Word> words = dataSet.GetDistinctSortedWords().Where(wrd => !ExclusionWordList.Contains(wrd.Value));
 
 			if (words.Any())
 			{

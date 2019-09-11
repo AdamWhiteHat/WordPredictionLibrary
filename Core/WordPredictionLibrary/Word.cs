@@ -23,7 +23,7 @@ namespace WordPredictionLibrary.Core
 
 		public Word()
 		{
-			_previousWordsDictionary = new Dictionary<List<string>, int>(new WordListComparer());
+			_previousWordsDictionary = new Dictionary<List<string>, int>(new WordListEqualityComparer());
 			_nextWordDictionary = new NextWordFrequencyDictionary();
 		}
 
@@ -213,7 +213,7 @@ namespace WordPredictionLibrary.Core
 
 			if (_previousWordsDictionary.Any())
 			{
-				Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListComparer());
+				Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListEqualityComparer());
 				_previousWordsDictionary = previousDict;
 			}
 		}

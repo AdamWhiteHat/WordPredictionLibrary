@@ -45,12 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="HashHelper.cs" />
     <Compile Include="NextWordFrequencyDictionary.cs" />
     <Compile Include="TrainedDataSet.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WordDictionary.cs" />
-    <Compile Include="WordListComparer.cs" />
+    <Compile Include="WordEqualityComparer.cs" />
+    <Compile Include="WordListEqualityComparer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
