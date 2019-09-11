@@ -267,7 +267,7 @@ namespace SuggestWordLibrary
 			{
 				File.WriteAllText(selectedFile, string.Empty); // Truncate the file if it already exists since we 
 
-				IEnumerable<string> lines = dataSet.GetDistinctSortedWordStrings();
+				IEnumerable<string> lines = dataSet.GetEntireDictionaryString();
 
 				StringBuilder stringBuilder = new StringBuilder((int)Math.Min(10000, dataSet.UniqueWordCount));
 				foreach (string line in lines)

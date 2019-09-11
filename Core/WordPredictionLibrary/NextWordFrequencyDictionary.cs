@@ -36,6 +36,11 @@ namespace WordPredictionLibrary.Core
 		{
 			_orderedDictionary = _internalDictionary.OrderByFrequencyDescending();
 
+			if (!_orderedDictionary.Any())
+			{
+				return "(dictionary empty)";
+			}
+
 			List<Tuple<Word, decimal>> tupleList = _orderedDictionary
 														.Select(kvp => new Tuple<Word, decimal>(kvp.Key, kvp.Value))
 														.ToList();
@@ -135,7 +140,7 @@ namespace WordPredictionLibrary.Core
 			return GetNextWordByFrequencyDescending(previousWord).Take(count);
 		}
 
-		private IOrderedEnumerable<KeyValuePair<Word, decimal>> _orderedDictionary = null;		
+		private IOrderedEnumerable<KeyValuePair<Word, decimal>> _orderedDictionary = null;
 
 		public IEnumerable<string> GetNextWordByFrequencyDescending()
 		{
@@ -179,7 +184,7 @@ namespace WordPredictionLibrary.Core
 
 			return orderedFreqKvp.ToDictionary(k => k.Key, v => v.Value);
 		}
-		
+
 		#endregion
 
 	}

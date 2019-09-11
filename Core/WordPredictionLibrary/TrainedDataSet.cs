@@ -62,6 +62,11 @@ namespace WordPredictionLibrary.Core
 			return _wordDictionary.GetDistinctSortedWordsList();
 		}
 
+		public IEnumerable<string> GetEntireDictionaryString()
+		{
+			return GetDistinctSortedWords().Select(w => w?.ToString() ?? "(empty)");
+		}
+
 		public IEnumerable<string> GetDistinctSortedWordStrings()
 		{
 			return GetDistinctSortedWords().Select(w => w?.Value ?? "(null)");
