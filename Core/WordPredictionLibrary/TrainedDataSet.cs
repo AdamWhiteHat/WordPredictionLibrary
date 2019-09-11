@@ -64,7 +64,18 @@ namespace WordPredictionLibrary.Core
 
 		public IEnumerable<string> GetEntireDictionaryString()
 		{
-			return GetDistinctSortedWords().Select(w => w?.ToString() ?? "(empty)");
+			IEnumerable<Word> words = GetDistinctSortedWords().Select(w => w);
+			if (words.Any())
+			{
+				foreach (Word word in words)
+				{
+					foreach (string line in word.FormatAsString())
+					{
+						yield return line;
+					}
+				}
+			}
+			yield break;
 		}
 
 		public IEnumerable<string> GetDistinctSortedWordStrings()
@@ -265,7 +276,8 @@ namespace WordPredictionLibrary.Core
 
 		public override string ToString()
 		{
-			return _wordDictionary.ToString();
+			throw new NotImplementedException();
+			//return _wordDictionary.ToString();
 		}
 
 		#endregion

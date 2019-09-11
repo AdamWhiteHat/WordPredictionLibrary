@@ -166,7 +166,7 @@ namespace WordPredictionLibrary.Forensics
 			IEnumerable<Word> searchWords = _wordDictionary.Words.Take(20);
 			foreach (Word word in searchWords)
 			{
-				result.AppendFormat("{0}:{1}", word.Value, word._nextWordDictionary._internalDictionary.First().Key);
+				result.AppendFormat("{0}:{1}", word.Value, word._nextWordDictionary._internalDictionary.First().Key.Value);
 				result.AppendLine();
 			}
 

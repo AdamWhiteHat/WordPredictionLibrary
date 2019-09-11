@@ -80,18 +80,23 @@ namespace WordPredictionLibrary.Core
 
 		public override string ToString()
 		{
-			StringBuilder result = new StringBuilder();
-			result.AppendFormat(
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<string> FormatAsString()
+		{
+			yield return
+				string.Format(
 						"[\"{0}\" - {1}/{2}:",
 						Value.ToUpperInvariant(),
 						NextWordDistinctCount,
-						AbsoluteFrequency
-			);
-			result.AppendLine("");
-			result.Append(_nextWordDictionary.ToString());
-			result.Append("],");
-
-			return result.ToString();
+						AbsoluteFrequency);
+			//foreach (string line in _nextWordDictionary.FormatAsString().Take(20))
+			//{
+			//	yield return line;
+			//}
+			yield return "],";
+			yield break;
 		}
 
 		#endregion

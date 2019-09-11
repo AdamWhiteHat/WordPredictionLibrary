@@ -57,17 +57,18 @@ namespace WordPredictionLibrary.Core
 
 		public override string ToString()
 		{
-			if (!isOrdered)
-			{
-				OrderInternalDictionary();
-			}
-
-			StringBuilder result = new StringBuilder();
-			foreach (Word word in Words)
-			{
-				result.AppendLine(word.ToString());
-			}
-			return result.ToString();
+			throw new NotImplementedException();
+			//if (!isOrdered)
+			//{
+			//	OrderInternalDictionary();
+			//}
+			//
+			//StringBuilder result = new StringBuilder();
+			//foreach (Word word in Words)
+			//{
+			//	result.AppendLine(word.ToString());
+			//}
+			//return result.ToString();
 		}
 
 		#endregion

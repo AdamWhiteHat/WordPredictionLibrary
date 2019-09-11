@@ -34,46 +34,36 @@ namespace WordPredictionLibrary.Core
 
 		public override string ToString()
 		{
-			_orderedDictionary = _internalDictionary.OrderByFrequencyDescending();
+			throw new NotImplementedException();
+		}
 
-			if (!_orderedDictionary.Any())
+		public IEnumerable<string> FormatAsString()
+		{
+			if (!_internalDictionary.Values.Any())
 			{
-				return "(dictionary empty)";
+				yield break;
 			}
 
-			List<Tuple<Word, decimal>> tupleList = _orderedDictionary
-														.Select(kvp => new Tuple<Word, decimal>(kvp.Key, kvp.Value))
-														.ToList();
-			Tuple<Word, decimal> first = tupleList.FirstOrDefault();
-
-			if (first == null) { return "first == null"; }
-
 			int padding = 0;
-			decimal counter = first.Item2;
+			decimal counter = _internalDictionary.Values.Max();
 
-			StringBuilder result = new StringBuilder();
 			while (counter-- > 0)
 			{
-				List<Tuple<Word, decimal>> words = tupleList.Where(t => t.Item2 == counter)
-															.Select(t => new Tuple<Word, decimal>(t.Item1, t.Item2))
-															.ToList();
-				if (words == null || words.Count < 1)
+				IEnumerable<KeyValuePair<Word, decimal>> matches = _internalDictionary.Where(kvp => kvp.Value == counter);
+				if (!matches.Any())
 				{
 					continue;
 				}
 
 				padding++;
+				string paddingString = new string(Enumerable.Repeat<char>(' ', padding).ToArray());
 
-				result.AppendFormat(new string(Enumerable.Repeat<char>(' ', padding).ToArray()));
-
-				foreach (Tuple<Word, decimal> tuple in words)
+				foreach (KeyValuePair<Word, decimal> kvp in matches)
 				{
-					result.AppendFormat("{0}:{1}   ", tuple.Item2, tuple.Item1.Value);
+					yield return string.Format("{0}{1}:{2}   ", paddingString, kvp.Value, kvp.Key.Value);
 				}
-
-				result.AppendLine("");
 			}
-			return result.ToString();
+			yield break;
 		}
 
 		#endregion
