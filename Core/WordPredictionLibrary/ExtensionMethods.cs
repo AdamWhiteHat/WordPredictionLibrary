@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+
 
 namespace WordPredictionLibrary.Core
 {
@@ -60,18 +63,17 @@ namespace WordPredictionLibrary.Core
 		}
 	}
 
-	public static class NextWordFrequencyDictionaryExtensionMethods
+	public static class DictionaryExtensionMethods
 	{
-		public static IOrderedEnumerable<KeyValuePair<Word, decimal>> OrderByFrequencyDescending(this Dictionary<Word, decimal> source)
+		public static IOrderedEnumerable<KeyValuePair<TKey, TValue>> OrderDictionaryBy<TKey, TValue, TSortKey>(this Dictionary<TKey, TValue> source, Func<KeyValuePair<TKey, TValue>, TSortKey> keySelector, SortDirection sortDirection)
 		{
-			// If we haven't set FrequencyDictionary yet OR it is out of date (dict has more entries)
-			if (source.Any())
+			if (sortDirection == SortDirection.Ascending)
 			{
-				return source.OrderByDescending(kvp => kvp.Value);
+				return source.OrderBy(keySelector);
 			}
 			else
 			{
-				return (IOrderedEnumerable<KeyValuePair<Word, decimal>>)new List<KeyValuePair<Word, decimal>>();
+				return source.OrderByDescending(keySelector);
 			}
 		}
 	}

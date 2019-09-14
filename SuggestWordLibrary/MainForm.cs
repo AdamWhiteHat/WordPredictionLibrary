@@ -265,7 +265,9 @@ namespace SuggestWordLibrary
 			string selectedFile = ShowFileDialog(openFileDialog);
 			if (!string.IsNullOrWhiteSpace(selectedFile))
 			{
-				File.WriteAllText(selectedFile, string.Empty); // Truncate the file if it already exists since we 
+				File.WriteAllText(selectedFile, string.Empty); // Truncate the file if it already exists since we
+
+				dataSet.OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
 
 				IEnumerable<string> lines = dataSet.GetEntireDictionaryString();
 
@@ -381,7 +383,7 @@ namespace SuggestWordLibrary
 				return;
 			}
 
-			dataSet.OrderInternalDictionary();
+			dataSet.OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
 
 			List<string> selectedItems = listWords.SelectedItems.OfType<object>().Select(obj => obj.ToString()).ToList();
 			List<Word> selectedWords = selectedItems.Select(itm => dataSet.Find(itm)).ToList();

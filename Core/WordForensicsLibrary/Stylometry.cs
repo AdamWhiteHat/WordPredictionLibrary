@@ -159,7 +159,7 @@ namespace WordPredictionLibrary.Forensics
 
 		public string GetCollocations()
 		{
-			_wordDictionary.OrderInternalDictionary();
+			_wordDictionary.OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
 
 			StringBuilder result = new StringBuilder();
 

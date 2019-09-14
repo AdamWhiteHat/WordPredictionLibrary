@@ -18,6 +18,8 @@ namespace WordPredictionLibrary.Core
 
 		internal Dictionary<List<string>, int> _previousWordsDictionary;
 
+		private WordDictionary _parentDictionary;
+
 
 		#region Constructors
 
@@ -25,11 +27,13 @@ namespace WordPredictionLibrary.Core
 		{
 			_previousWordsDictionary = new Dictionary<List<string>, int>(new WordListEqualityComparer());
 			_nextWordDictionary = new NextWordFrequencyDictionary();
+			_parentDictionary = new WordDictionary();
 		}
 
-		public Word(string value)
+		public Word(WordDictionary parentDictionary, string value)
 			: this()
 		{
+			_parentDictionary = parentDictionary;
 			Value = value.TryToLower();
 		}
 
@@ -78,24 +82,21 @@ namespace WordPredictionLibrary.Core
 			return Value.GetHashCode();
 		}
 
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-		}
-
 		public IEnumerable<string> FormatAsString()
 		{
-			yield return
-				string.Format(
-						"[\"{0}\" - {1}/{2}:",
-						Value.ToUpperInvariant(),
-						NextWordDistinctCount,
-						AbsoluteFrequency);
-			//foreach (string line in _nextWordDictionary.FormatAsString().Take(20))
-			//{
-			//	yield return line;
-			//}
-			yield return "],";
+			decimal wordOccurrence = AbsoluteFrequency;
+			decimal totalWords = _parentDictionary.UniqueWordCount;
+
+			decimal prevalence = Math.Round(wordOccurrence / totalWords, 5);
+
+			yield return string.Format
+				(
+					"[\"{0}\" \t - \t {1}/{2}]",
+					Value.ToUpperInvariant(),
+					wordOccurrence,
+					totalWords
+				);
+
 			yield break;
 		}
 
@@ -187,7 +188,7 @@ namespace WordPredictionLibrary.Core
 
 		public decimal GetVariance()
 		{
-			if (_nextWordDictionary == null) { return noMatchValue; }
+			if (_nextWordDictionary == null || !_nextWordDictionary._internalDictionary.Any()) { return noMatchValue; }
 
 			decimal sum = _nextWordDictionary._internalDictionary.Sum(kvp => (long)kvp.Value);
 			decimal mean = sum / AbsoluteFrequency;
@@ -208,17 +209,16 @@ namespace WordPredictionLibrary.Core
 
 		#region Order
 
-		public void OrderInternalDictionary()
+		public void OrderInternalDictionary(SortCriteria sortCriteria, SortDirection sortDirection)
 		{
-			if (_nextWordDictionary._internalDictionary.Any())
+			if (_nextWordDictionary != null && _nextWordDictionary._internalDictionary.Any())
 			{
-				Dictionary<Word, decimal> nextDict = _nextWordDictionary._internalDictionary.OrderByFrequencyDescending().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-				_nextWordDictionary = new NextWordFrequencyDictionary(nextDict);
+				_nextWordDictionary.OrderInternalDictionary(sortCriteria, sortDirection);
 			}
 
 			if (_previousWordsDictionary.Any())
 			{
-				Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderByDescending(kvp => kvp.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListEqualityComparer());
+				Dictionary<List<string>, int> previousDict = _previousWordsDictionary.OrderDictionaryBy(kvp => kvp.Value, sortDirection).ToDictionary(kvp => kvp.Key, kvp => kvp.Value, new WordListEqualityComparer());
 				_previousWordsDictionary = previousDict;
 			}
 		}

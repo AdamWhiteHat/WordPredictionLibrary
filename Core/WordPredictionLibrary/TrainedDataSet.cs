@@ -14,18 +14,20 @@ namespace WordPredictionLibrary.Core
 		public decimal TotalSampleSize { get { return _wordDictionary.TotalSampleSize; } }
 
 		internal WordDictionary _wordDictionary = null;
+		private bool isOrdered = false;
 		private static string AllowedChars = " .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		#region Constructors
 
 		public TrainedDataSet()
+			: this(new WordDictionary())
 		{
-			_wordDictionary = new WordDictionary();
 		}
 
 		public TrainedDataSet(WordDictionary dictionary)
 		{
 			_wordDictionary = dictionary;
+			isOrdered = false;
 		}
 
 		#endregion
@@ -40,6 +42,7 @@ namespace WordPredictionLibrary.Core
 		public void Train(FileInfo paragraphFile)
 		{
 			List<List<string>> paragraphs = TokenizeTextFile(paragraphFile.FullName);
+			isOrdered = false;
 			_wordDictionary.Train(paragraphs);
 		}
 
@@ -59,12 +62,14 @@ namespace WordPredictionLibrary.Core
 
 		public IEnumerable<Word> GetDistinctSortedWords()
 		{
-			return _wordDictionary.GetDistinctSortedWordsList();
+			OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
+			return _wordDictionary.Words;
 		}
 
 		public IEnumerable<string> GetEntireDictionaryString()
 		{
-			IEnumerable<Word> words = GetDistinctSortedWords().Select(w => w);
+			OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
+			IEnumerable<Word> words = _wordDictionary.Words;
 			if (words.Any())
 			{
 				foreach (Word word in words)
@@ -256,9 +261,16 @@ namespace WordPredictionLibrary.Core
 			return result;
 		}
 
-		public void OrderInternalDictionary()
+		public void OrderInternalDictionary(SortCriteria sortCriteria, SortDirection sortDirection)
 		{
-			_wordDictionary.OrderInternalDictionary();
+			if (_wordDictionary != null && _wordDictionary._internalDictionary.Any())
+			{
+				if (!isOrdered)
+				{
+					isOrdered = true;
+					_wordDictionary.OrderInternalDictionary(sortCriteria, sortDirection);
+				}
+			}
 		}
 
 		#endregion
@@ -268,16 +280,6 @@ namespace WordPredictionLibrary.Core
 		public Word Find(string word)
 		{
 			return _wordDictionary.Find(word);
-		}
-
-		#endregion
-
-		#region ToString
-
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-			//return _wordDictionary.ToString();
 		}
 
 		#endregion
@@ -317,6 +319,9 @@ namespace WordPredictionLibrary.Core
 
 			// Create a Word object for each Word before populating NextWordFrequencyDictionary
 			Dictionary<string, Word> dictionary = new Dictionary<string, Word>();
+			WordDictionary wordDictionary = new WordDictionary(dictionary);
+
+
 			foreach (XElement wordNode in wordNodes)
 			{
 				XElement textNode = wordNode.XPathSelectElement(XmlElementNames.ValueNode);
@@ -327,7 +332,7 @@ namespace WordPredictionLibrary.Core
 				int ttlWordCount = 0;
 				int.TryParse(countNode.Value, out ttlWordCount);
 
-				dictionary.Add(textNode.Value, new Word(textNode.Value));
+				dictionary.Add(textNode.Value, new Word(wordDictionary, textNode.Value));
 			}
 
 			// Now populate NextWordFrequencyDictionary
@@ -379,8 +384,7 @@ namespace WordPredictionLibrary.Core
 				}
 			}
 
-			if (dictionary != null) { return new TrainedDataSet(new WordDictionary(dictionary)); }
-			else { return new TrainedDataSet(); }
+			return new TrainedDataSet(wordDictionary);
 		}
 
 		public static bool SerializeToXml(TrainedDataSet dataset, string filename)
@@ -388,7 +392,7 @@ namespace WordPredictionLibrary.Core
 			if (dataset == null || dataset._wordDictionary == null
 				|| dataset._wordDictionary.UniqueWordCount < 1) { return false; }
 
-			dataset._wordDictionary.OrderInternalDictionary();
+			dataset.OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
 
 			XDocument doc = new XDocument(
 				new XElement(XmlElementNames.RootNode,

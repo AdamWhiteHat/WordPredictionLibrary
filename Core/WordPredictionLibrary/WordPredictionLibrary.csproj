@@ -47,6 +47,7 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HashHelper.cs" />
     <Compile Include="NextWordFrequencyDictionary.cs" />
+    <Compile Include="SortCriteria.cs" />
     <Compile Include="TrainedDataSet.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

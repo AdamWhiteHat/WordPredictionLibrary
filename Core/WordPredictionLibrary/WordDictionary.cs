@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 
 namespace WordPredictionLibrary.Core
 {
@@ -12,63 +16,26 @@ namespace WordPredictionLibrary.Core
 
 		#region Internal Properties & Method
 
-		internal List<Word> Words { get { return _internalDictionary.Values.ToList(); } }
+		internal IEnumerable<Word> Words { get { return _internalDictionary.Values.Select(v => v); } }
 		internal Dictionary<string, Word> _internalDictionary = null;
-		internal bool isOrdered = false;
+		private bool isOrdered = false;
 		public static string StartPlaceholder = "{{start}}";
 		public static string EndPlaceholder = "{{end}}";
 		public static decimal noMatchValue = 0;
-
-		internal void OrderInternalDictionary()
-		{
-			if (_internalDictionary != null)
-			{
-				if (!isOrdered)
-				{
-					isOrdered = true;
-
-					Dictionary<string, Word> newDict = _internalDictionary.OrderByDescending(kvp => kvp.Value.AbsoluteFrequency).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-					_internalDictionary = newDict;
-
-					// Sort every Word's internal dictionary
-					foreach (Word word in _internalDictionary.Values)
-					{
-						word.OrderInternalDictionary();
-					}
-				}
-			}
-		}
 
 		#endregion
 
 		#region Constructors & ToString
 
 		public WordDictionary()
+			: this(new Dictionary<string, Word>())
 		{
-			_internalDictionary = new Dictionary<string, Word>();
-			isOrdered = false;
 		}
 
 		public WordDictionary(Dictionary<string, Word> dictionary)
-			: this()
 		{
 			_internalDictionary = dictionary;
-		}
-
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-			//if (!isOrdered)
-			//{
-			//	OrderInternalDictionary();
-			//}
-			//
-			//StringBuilder result = new StringBuilder();
-			//foreach (Word word in Words)
-			//{
-			//	result.AppendLine(word.ToString());
-			//}
-			//return result.ToString();
+			isOrdered = false;
 		}
 
 		#endregion
@@ -88,6 +55,13 @@ namespace WordPredictionLibrary.Core
 			if (sentence == null || sentence.Count < 1) { return; }
 			sentence = sentence.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
 			sentence = sentence.Select(s => s.TryToLower()).ToList();
+
+			if (!sentence.Any())
+			{
+				return;
+			}
+			isOrdered = false;
+			maxOccurence = -1;
 
 			List<string> previousWords = new List<string>();
 			string lastWord = StartPlaceholder;
@@ -133,7 +107,7 @@ namespace WordPredictionLibrary.Core
 			}
 			if (!_internalDictionary.ContainsKey(lowerWord))
 			{
-				_internalDictionary.Add(lowerWord, new Word(lowerWord));
+				_internalDictionary.Add(lowerWord, new Word(this, lowerWord));
 			}
 		}
 
@@ -213,12 +187,42 @@ namespace WordPredictionLibrary.Core
 
 		#region Sort
 
-		public IEnumerable<Word> GetDistinctSortedWordsList()
+		internal void OrderInternalDictionary(SortCriteria sortCriteria, SortDirection sortDirection)
 		{
-			return _internalDictionary
-						.OrderByDescending(kvp => kvp.Value.AbsoluteFrequency)
-						.Select(kvp => kvp.Value)
-						.Distinct();
+			if (_internalDictionary != null)
+			{
+				if (!isOrdered)
+				{
+					isOrdered = true;
+
+					IOrderedEnumerable<KeyValuePair<string, Word>> ordered = null;
+
+					if (sortCriteria == SortCriteria.AbsoluteFrequency)
+					{
+						ordered = _internalDictionary.OrderDictionaryBy(kvp => kvp.Value.AbsoluteFrequency, sortDirection);
+					}
+					else if (sortCriteria == SortCriteria.NextWordCount)
+					{
+						ordered = _internalDictionary.OrderDictionaryBy(kvp => kvp.Value.NextWordDistinctCount, sortDirection);
+					}
+					else if (sortCriteria == SortCriteria.StandardDeviation)
+					{
+						ordered = _internalDictionary.OrderDictionaryBy(kvp => kvp.Value.GetStandardDeviation(), sortDirection);
+					}
+					else if (sortCriteria == SortCriteria.Variance)
+					{
+						ordered = _internalDictionary.OrderDictionaryBy(kvp => kvp.Value.GetVariance(), sortDirection);
+					}
+
+					_internalDictionary = ordered.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+					// Sort every Word's internal dictionary
+					foreach (Word word in _internalDictionary.Values)
+					{
+						word.OrderInternalDictionary(sortCriteria, sortDirection);
+					}
+				}
+			}
 		}
 
 		public string GetDistinctSortedWordFrequencyString()
@@ -275,6 +279,16 @@ namespace WordPredictionLibrary.Core
 			return (decimal)Math.Sqrt((double)this.GetVariance());
 		}
 
+		public decimal GetMaxOccurence()
+		{
+			if (maxOccurence == -1)
+			{
+				maxOccurence = Find(EndPlaceholder).AbsoluteFrequency;
+			}
+			return maxOccurence;
+		}
+		private decimal maxOccurence = -1;
+
 		#endregion
 
 		#region Find
@@ -295,8 +309,9 @@ namespace WordPredictionLibrary.Core
 
 		public Dictionary<Word, decimal> GetFrequencyDictionary()
 		{
+			OrderInternalDictionary(SortCriteria.AbsoluteFrequency, SortDirection.Descending);
 			decimal baseProbability = 1 / TotalSampleSize;
-			return GetDistinctSortedWordsList().ToDictionary(k => k, v => baseProbability * v.AbsoluteFrequency);
+			return Words.ToDictionary(k => k, v => baseProbability * v.AbsoluteFrequency);
 		}
 
 		public Dictionary<string, Word> GetInternalDictionary()
