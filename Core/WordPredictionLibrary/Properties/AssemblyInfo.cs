@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("www.csharpprogramming.tips")]
 [assembly: AssemblyProduct("WordPredictionLibrary")]
-[assembly: AssemblyCopyright("Copyright © Adam Rakaska 2015")]
+[assembly: AssemblyCopyright("Copyright © Adam White 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
